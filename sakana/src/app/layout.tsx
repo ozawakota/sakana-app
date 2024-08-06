@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Noto_Sans_JP } from "next/font/google";
+import clsx from "clsx";
 import "./globals.css";
 import Header from "./header";
 
-const inter = Inter({ subsets: ["latin"] });
+const notoSansJP = Noto_Sans_JP({
+  subsets: ['latin'],
+  variable: '--font-noto-sans-jp',
+  // weight: 'variable', // default なので不要。バリアブルフォントでなければ必要
+  // display: 'swap', // default なので不要
+  // preload: true, // default なので不要
+  // adjustFontFallback: true, // next/font/google で default なので不要
+  // fallback: ['system-ui', 'arial'], // local font fallback なので不要
+})
+
 
 export const metadata: Metadata = {
   title: "Page Transition",
@@ -16,10 +26,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Header />
-        <main>{children}</main>
+    <html lang='ja'>
+      <body className={clsx(notoSansJP.variable, 'font-sans')}>
+        <div className="bg-gradient-animation">
+          <Header />
+          <main>{children}</main>
+        </div>
       </body>
     </html>
   );
