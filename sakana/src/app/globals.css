@@ -6,6 +6,7 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --c-darkorange: #f27521;
 }
 
 @keyframes bggradient {
@@ -24,4 +25,10 @@
   background: linear-gradient(270deg, #ff7e5f, #feb47b);
   background-size: 400% 400%;
   animation: bggradient 15s ease infinite;
+}
+@layer base {
+  .c-container {
+    width: min(100% - 40px, 1120px);
+    margin-inline: auto;
+  }
 }

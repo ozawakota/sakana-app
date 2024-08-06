@@ -16,7 +16,7 @@ const notoSansJP = Noto_Sans_JP({
 
 
 export const metadata: Metadata = {
-  title: "Page Transition",
+  title: "TOP ページ",
   description: "Using framer-motion to add trasition between pages",
 };
 
@@ -30,7 +30,11 @@ export default function RootLayout({
       <body className={clsx(notoSansJP.variable, 'font-sans')}>
         <div className="bg-gradient-animation">
           <Header />
-          <main>{children}</main>
+          <main className="md:py-[60px] py-[30px]">
+            <div className="c-container">
+              {children}
+            </div>
+            </main>
         </div>
       </body>
     </html>
