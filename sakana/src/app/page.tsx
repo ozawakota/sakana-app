@@ -9,7 +9,6 @@ export default function Home() {
           <div>
             <p className="text-white md:text-2xl">通貨</p>
           </div>
-
         </div>
       </div>
     </section>
