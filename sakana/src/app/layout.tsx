@@ -3,6 +3,7 @@ import { Noto_Sans_JP } from "next/font/google";
 import clsx from "clsx";
 import "./globals.css";
 import Header from "./header";
+import { Toaster } from "@/components/ui/toaster"
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ['latin'],
@@ -34,7 +35,8 @@ export default function RootLayout({
             <div className="c-container">
               {children}
             </div>
-            </main>
+          </main>
+          <Toaster />
         </div>
       </body>
     </html>

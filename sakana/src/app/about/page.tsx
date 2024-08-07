@@ -1,15 +1,31 @@
+"use client"
+ 
+import { Button } from "@/components/ui/button"
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
+
 export default function About() {
+  const { toast } = useToast()
+
   return (
     <section className="p-4">
       <div className="container">
         <h1 className="text-2xl font-bold">About Page</h1>
-        <p className="font-medium py-2">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Recusandae
-          eligendi ut necessitatibus nulla modi dolorem dicta animi. Praesentium
-          aliquid, ducimus libero omnis cumque quisquam nesciunt, exercitationem
-          similique expedita recusandae nam reprehenderit earum officiis ad nisi
-          optio laboriosam natus. Id, dolorum.
-        </p>
+        <Button
+      variant="outline"
+      onClick={() => {
+        toast({
+          title: "Scheduled: Catch up ",
+          description: "Friday, February 10, 2023 at 5:57 PM",
+          action: (
+            <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
+          ),
+        })
+      }}
+    >
+      Add to calendar
+    </Button>
+    
       </div>
     </section>
   );
