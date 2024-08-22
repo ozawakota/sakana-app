@@ -3,9 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
- 
 import { Button } from "@/components/ui/button"
-
 import { toast } from "@/components/ui/use-toast"
 
 import {
@@ -66,6 +64,8 @@ export default function Contact() {
   return (
     <section className="p-4">
       <div className="">
+        <h1 className="text-2xl font-bold mb-4 md:mb-10 text-white">Contact Page</h1>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
