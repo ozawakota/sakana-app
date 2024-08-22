@@ -65,7 +65,7 @@ export default function Contact() {
 
   return (
     <section className="p-4">
-      <div className="container">
+      <div className="">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField

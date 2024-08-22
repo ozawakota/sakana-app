@@ -2,7 +2,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
   return (
     <section className="p-4">
-      <div className="container">
+      <div className="">
         <h1 className="text-2xl font-bold">{params.slug} Page</h1>
         <p className="w-1/2 font-medium py-2">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio

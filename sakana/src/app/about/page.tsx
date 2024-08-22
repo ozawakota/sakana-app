@@ -9,7 +9,7 @@ export default function About() {
 
   return (
     <section className="p-4">
-      <div className="container">
+      <div className="">
         <h1 className="text-2xl font-bold">About Page</h1>
         <Button
       variant="outline"

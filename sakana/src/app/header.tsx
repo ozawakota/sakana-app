@@ -13,12 +13,12 @@ export default function Header() {
       <div className="c-container flex justify-between relative">
         <h1 className="grid place-items-center">
           <Link href="/">
-            計算機
+            魚図鑑
           </Link>
         </h1>
         <div className="">
           <nav className="p-4">
-            <ul className="flex gap-4 md:gap-8">
+            <ul className="flex gap-4 md:gap-4">
               <li>
                 <Link
                   href="/"
