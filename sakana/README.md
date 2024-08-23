@@ -14,23 +14,26 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Prisma がマイグレーションを実行する際に必要な「シャドウデータベース」を作成できないことを示しています。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+# MySQLコンテナに接続
+docker exec -it fish_encyclopedia_mysql mysql -u root -p
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+# MySQLプロンプトで以下のコマンドを実行
+# 'your_password'を実際のパスワードに置き換えてください
+GRANT ALL PRIVILEGES ON *.* TO 'your_username'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+EXIT;
+```
 
-## Learn More
+```
+# MySQLコンテナに接続
+docker exec -it fish_encyclopedia_mysql mysql -u root -p
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# MySQLプロンプトで以下のコマンドを実行
+CREATE DATABASE fish_encyclopedia_shadow;
+GRANT ALL PRIVILEGES ON fish_encyclopedia_shadow.* TO 'your_username'@'%';
+FLUSH PRIVILEGES;
+EXIT;
+```
