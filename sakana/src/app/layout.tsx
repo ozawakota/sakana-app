@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Noto_Sans_JP } from "next/font/google";
 import clsx from "clsx";
 import "./globals.css";
@@ -30,17 +31,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='ja'>
+    <html lang='ja'
+    suppressHydrationWarning
+    >
       <body className={clsx(notoSansJP.variable, 'font-sans')}>
-        <div className="bg-gradient-animation">
-          <Header />
-          <main className="md:py-[60px] py-[30px]">
-            <div className="c-container">
-              {children}
-            </div>
-          </main>
-          <Toaster />
-        </div>
+        <ThemeProvider>
+          <div className="bg-gradient-animation">
+            <Header />
+            <main className="md:py-[60px] py-[30px]">
+              <div className="c-container">
+                {children}
+              </div>
+            </main>
+            <Toaster />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

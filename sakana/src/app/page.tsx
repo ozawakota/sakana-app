@@ -8,9 +8,9 @@ export default function Home() {
       <div className="inner">
         <div className="flex justify-center md:w-[900px] mx-auto gap-[50px]">
           <Button>ボタン</Button>
-          <Button size="lg" variant="secondary" onClick={() => { alert('aleart')}}>Alert!</Button>
-          <Button >Save</Button>
-          <Button >ボタン</Button>
+          <Button size="lg" variant="alert" onClick={() => { alert('aleart')}}>Alert!</Button>
+          <Button variant="success">Save</Button>
+          <Button variant="destructive">Delete</Button>
         </div>
       </div>
     </section>

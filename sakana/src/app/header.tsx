@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import { ThemeToggle } from "@/components/theme-toggle";
+
 
 
 export default function Header() {
@@ -16,7 +18,8 @@ export default function Header() {
             魚図鑑
           </Link>
         </h1>
-        <div className="">
+        <div className="flex gap-4 md:gap-4">
+          <ThemeToggle />
           <nav className="p-4">
             <ul className="flex gap-4 md:gap-4">
               <li>
