@@ -29,3 +29,9 @@ Supabase 環境構築
 ## フォーム
 
 https://zenn.dev/web_life_ch/articles/c370ccbc85d3ba
+
+## prisma
+
+```bash
+npx prisma studio # http://localhost:5555/
+```
