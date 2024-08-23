@@ -35,10 +35,16 @@ export default function RootLayout({
     suppressHydrationWarning
     >
       <body className={clsx(notoSansJP.variable, 'font-sans')}>
-        <ThemeProvider>
-          <div className="bg-gradient-animation">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          storageKey="acme-theme"
+        >
+          <div className="">
             <Header />
-            <main className="md:py-[60px] py-[30px]">
+            <main className="md:py-[60px] py-[30px] bg-gradient-animation">
               <div className="c-container">
                 {children}
               </div>

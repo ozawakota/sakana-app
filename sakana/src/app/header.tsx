@@ -1,5 +1,5 @@
 'use client';
-import Image from "next/image";
+
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
@@ -11,15 +11,15 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="bg-white top-0 w-full z-50 pt-[5px] pb-[5px] md:h-[85px] md:py-[10px]">
+    <header className="top-0 w-full z-50 pt-[5px] pb-[5px] md:h-[85px] md:py-[10px]">
       <div className="c-container flex justify-between relative">
         <h1 className="grid place-items-center">
           <Link href="/">
             魚図鑑
           </Link>
         </h1>
-        <div className="flex gap-4 md:gap-4">
-          <ThemeToggle />
+        <div className="flex gap-4 md:gap-4 items-center">
+         
           <nav className="p-4">
             <ul className="flex gap-4 md:gap-4">
               <li>
@@ -64,7 +64,7 @@ export default function Header() {
               </li>
             </ul>
           </nav>
-
+          <ThemeToggle />
         </div>
       </div>
     </header>
