@@ -20,7 +20,7 @@ export default function Header() {
   ]
 
   return (
-    <header className="top-0 w-full z-50 pt-[5px] pb-[5px] md:h-[85px] md:py-[10px]">
+    <header className="top-0 w-full z-50 py-[10px]">
       <div className="c-container flex justify-between relative">
         <h1 className="grid place-items-center">
           <Link href="/">
@@ -28,7 +28,7 @@ export default function Header() {
           </Link>
         </h1>
         <div className="flex items-center relative">
-          <nav className="p-4 hidden md:block">
+          <nav className="p-4 hidden lg:block">
             <ul className="lg:flex select-none gap-4 md:gap-4">
               {menuItems.map((item) => (
                 <li key={item.href}>
@@ -47,12 +47,12 @@ export default function Header() {
               ))}
             </ul>
           </nav>
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <ThemeToggle />
           </div>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">メニューを開く</span>
               </Button>
