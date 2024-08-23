@@ -12,6 +12,12 @@ node.js バージョン
 
 ## データベース
 
+設定方法
+https://qiita.com/Itsuki54/items/d2020be8e85727289c2d
+
+チュートリアル
+https://zenn.dev/thirosue/books/49a4ee418743ed/viewer/57d161
+
 ## どんなアプリか
 
 ## ステップ
