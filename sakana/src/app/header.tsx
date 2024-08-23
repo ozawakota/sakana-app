@@ -14,9 +14,9 @@ export default function Header() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname();
   const menuItems = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { href: "/", label: "ホーム" },
+    { href: "/about", label: "魚図鑑について" },
+    { href: "/contact", label: "お問い合わせ" },
   ]
 
   return (

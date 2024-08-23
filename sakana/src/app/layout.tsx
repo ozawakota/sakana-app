@@ -20,7 +20,7 @@ const notoSansJP = Noto_Sans_JP({
 export const metadata: Metadata = {
   title: {
     default: "TOP ページ | 魚図鑑",
-    template: '%sです'
+    template: '%s | 魚図鑑'
   },
   description: "Using framer-motion to add trasition between pages",
 };
