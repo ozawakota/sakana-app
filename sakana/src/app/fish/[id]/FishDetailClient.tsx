@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { getWaterTypeJapanese } from "@/lib/utils"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Droplet, Fish, CalendarDays, RefreshCw, ArrowLeft, Trash2 } from 'lucide-react'
+import { Droplet, Fish, CalendarDays, RefreshCw, ArrowLeft, Trash2, Edit } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +18,29 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
+
+import { speciesList } from "@/lib/common"
+
 
 type FishDetailClientProps = {
   fish: {
@@ -34,6 +56,8 @@ type FishDetailClientProps = {
 
 export default function FishDetailClient({ fish }: FishDetailClientProps) {
   const router = useRouter()
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editedFish, setEditedFish] = useState(fish)
 
   const handleDelete = async () => {
     try {
@@ -55,6 +79,37 @@ export default function FishDetailClient({ fish }: FishDetailClientProps) {
       toast({
         title: "削除失敗",
         description: "魚の削除中にエラーが発生しました。もう一度お試しください。",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await fetch(`/api/fish/${fish.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedFish),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update fish')
+      }
+
+      toast({
+        title: "更新完了",
+        description: `${editedFish.name}のデータが正常に更新されました。`,
+      })
+      setIsEditModalOpen(false)
+      router.refresh()
+    } catch (error) {
+      console.error('Error updating fish:', error)
+      toast({
+        title: "更新失敗",
+        description: "魚の更新中にエラーが発生しました。もう一度お試しください。",
         variant: "destructive",
       })
     }
@@ -93,12 +148,98 @@ export default function FishDetailClient({ fish }: FishDetailClientProps) {
           </div>
         </CardContent>
         <CardFooter className="bg-gray-50 px-8 py-4 flex justify-between">
-          <Button asChild variant="outline" className="sm:w-auto">
-            <Link href="/fish-list" className="flex items-center justify-center">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              魚一覧に戻る
-            </Link>
-          </Button>
+          <div className="flex space-x-2">
+            <Button asChild variant="outline">
+              <Link href="/fish-list" className="flex items-center justify-center">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                魚一覧に戻る
+              </Link>
+            </Button>
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="flex items-center justify-center">
+                  <Edit className="mr-2 h-4 w-4" />
+                  編集
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>魚の情報を編集</DialogTitle>
+                  <DialogDescription>
+                    魚の詳細情報を更新します。完了したら保存ボタンをクリックしてください。
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleEdit}>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="name" className="text-right">
+                        名前
+                      </Label>
+                      <Input
+                        id="name"
+                        value={editedFish.name}
+                        onChange={(e) => setEditedFish({ ...editedFish, name: e.target.value })}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="species" className="text-right">
+                        種類
+                      </Label>
+                      <Select
+                        value={editedFish.species}
+                        onValueChange={(value) => setEditedFish({ ...editedFish, species: value })}
+                      >
+                        <SelectTrigger className="col-span-3">
+                          <SelectValue placeholder="種類を選択" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {speciesList.map((species) => (
+                            <SelectItem key={species} value={species}>
+                              {species}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="waterType" className="text-right">
+                        生息地
+                      </Label>
+                      <Select
+                        value={editedFish.waterType}
+                        onValueChange={(value) => setEditedFish({ ...editedFish, waterType: value as 'FRESHWATER' | 'SALTWATER' | 'BRACKISH' })}
+                      >
+                        <SelectTrigger className="col-span-3">
+                          <SelectValue placeholder="生息地を選択" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="FRESHWATER">淡水</SelectItem>
+                          <SelectItem value="SALTWATER">海水</SelectItem>
+                          <SelectItem value="BRACKISH">汽水</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="description" className="text-right">
+                        説明
+                      </Label>
+                      <Textarea
+                        id="description"
+                        value={editedFish.description || ''}
+                        onChange={(e) => setEditedFish({ ...editedFish, description: e.target.value })}
+                        className="col-span-3"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit">保存</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" className="sm:w-auto">
