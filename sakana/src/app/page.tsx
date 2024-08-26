@@ -2,7 +2,6 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { Button } from "@/components/ui/button"
-import FishList from '@/app/fish-list/page'
 import FishListClient from '@/components/FishListClient'
 
 
@@ -39,8 +38,7 @@ export default async function Home() {
         </Button>
       </div>
       <h2 className="text-3xl font-bold mb-6 text-white mt-16">魚一覧</h2>
-
-      <FishListClient fishList={fishList} />
+      <FishListClient initialFishList={fishList} />
 
     </div>
   )
