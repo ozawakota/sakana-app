@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
 
@@ -16,11 +16,11 @@ type FormInputs = {
   name: string
   description: string
   waterType: 'FRESHWATER' | 'SALTWATER' | 'BRACKISH'
-  species: string[]
+  species: string
 }
 
 const speciesList = [
-  "サケ科", "コイ科", "タイ科", "サバ科", "カレイ科", "ナマズ科", "スズキ科", "フグ科", "ウナギ科", "カサゴ科","その他"
+  "サケ科", "コイ科", "タイ科", "サバ科", "カレイ科", "ナマズ科", "スズキ科", "フグ科", "ウナギ科", "カサゴ科", "ボラ科", "イシダイ科", "その他"
 ]
 
 export default function RegisterFish() {
@@ -29,8 +29,7 @@ export default function RegisterFish() {
   const { register, handleSubmit, control, formState: { errors }, setValue } = useForm<FormInputs>()
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    console.log(data,"data");
-    
+
     setIsLoading(true)
     try {
       const response = await fetch('/api/fish', {
@@ -116,25 +115,30 @@ export default function RegisterFish() {
             </div>
             <div>
               <Label className="text-base font-semibold">科目</Label>
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                {speciesList.map((species) => (
-                  <div key={species} className="flex items-center space-x-2">
-                    <div className="flex items-center space-x-2 cursor-pointer">
-                      <Checkbox
-                        id={species}
-                        {...register("species")}
-                        value={species}
-                      />
-                      <Label
-                        htmlFor={species}
-                        className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        {species}
-                      </Label>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Controller
+                name="species"
+                control={control}
+                rules={{ required: "科目を選択してください" }}
+                render={({ field }) => (
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="grid grid-cols-2 gap-2 mt-2"
+                  >
+                    {speciesList.map((species) => (
+                      <div key={species} className="flex items-center space-x-2">
+                        <RadioGroupItem value={species} id={species} />
+                        <Label
+                          htmlFor={species}
+                          className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {species}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                )}
+              />
               {errors.species && <p className="text-red-500 text-sm mt-1">{errors.species.message}</p>}
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
