@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
+import { speciesList } from "@/lib/common"
+
 
 type FormInputs = {
   name: string
@@ -19,9 +21,6 @@ type FormInputs = {
   species: string
 }
 
-const speciesList = [
-  "サケ科", "アユ科", "コイ科", "タイ科", "サバ科", "カレイ科", "ナマズ科", "スズキ科", "フグ科", "ウナギ科", "カサゴ科", "ボラ科", "イシダイ科", "その他"
-]
 
 function hiraganaToKatakana(str: string): string {
   return str.replace(/[\u3041-\u3096]/g, function(match) {

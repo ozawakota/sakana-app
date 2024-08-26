@@ -22,6 +22,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+import { speciesList } from "@/lib/common"
+
 type Fish = {
   id: number
   name: string
@@ -37,9 +39,6 @@ type FishListClientProps = {
   showDeleteButton: boolean
 }
 
-const speciesList = [
-  "サケ科", "アユ科", "コイ科", "タイ科", "サバ科", "カレイ科", "ナマズ科", "スズキ科", "フグ科", "ウナギ科", "カサゴ科", "ボラ科", "イシダイ科", "その他"
-]
 
 function LoadingSkeleton() {
   return (
