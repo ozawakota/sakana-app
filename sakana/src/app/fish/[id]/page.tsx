@@ -5,6 +5,11 @@ import { getWaterTypeJapanese } from "@/lib/utils"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Droplet, Fish, CalendarDays, RefreshCw, ArrowLeft } from 'lucide-react'
+import { Metadata, ResolvingMetadata } from 'next'
+
+type Props = {
+  params: { id: string }
+}
 
 async function getFish(id: string) {
   try {
@@ -21,7 +26,38 @@ async function getFish(id: string) {
   }
 }
 
-export default async function FishDetail({ params }: { params: { id: string } }) {
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const fish = await getFish(params.id)
+ 
+  return {
+    title: `${fish.name} | 魚一覧ページ`,
+    description: `${fish.name}の詳細情報。生息地: ${getWaterTypeJapanese(fish.waterType)}、科目: ${fish.species}`,
+    openGraph: {
+      title: `${fish.name} | 魚一覧`,
+      description: `${fish.name}の詳細情報。生息地: ${getWaterTypeJapanese(fish.waterType)}、科目: ${fish.species}`,
+      type: 'article',
+      images: [
+        {
+          url: '/placeholder.svg?height=630&width=1200',
+          width: 1200,
+          height: 630,
+          alt: `${fish.name}の画像`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${fish.name} | 魚図鑑`,
+      description: `${fish.name}の詳細情報。生息地: ${getWaterTypeJapanese(fish.waterType)}、科目: ${fish.species}`,
+      images: ['/placeholder.svg?height=630&width=1200'],
+    },
+  }
+}
+
+export default async function FishDetail({ params }: Props) {
   const fish = await getFish(params.id)
 
   return (
