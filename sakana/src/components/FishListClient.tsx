@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useFishStore } from '@/store/useFishStore'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, RefreshCw } from 'lucide-react'
 
 type Fish = {
   id: number
@@ -23,6 +23,10 @@ type Fish = {
 type FishListClientProps = {
   initialFishList: Fish[]
 }
+
+const speciesList = [
+  "サケ科", "アユ科", "コイ科", "タイ科", "サバ科", "カレイ科", "ナマズ科", "スズキ科", "フグ科", "ウナギ科", "カサゴ科", "ボラ科", "イシダイ科", "その他"
+]
 
 function LoadingSkeleton() {
   return (
@@ -47,50 +51,70 @@ function LoadingSkeleton() {
   )
 }
 
-function FilterSection({ waterTypeFilter, alphabetFilter, setWaterTypeFilter, setAlphabetFilter }) {
+function FilterSection({ waterTypeFilter, alphabetFilter, speciesFilter, setWaterTypeFilter, setAlphabetFilter, setSpeciesFilter, resetFilters }) {
   return (
-    <div className="mb-6 flex flex-wrap gap-4">
-      <div>
-        <label htmlFor="water-type-filter" className="block text-sm font-medium text-white mb-1">生息地</label>
-        <Select onValueChange={(value: any) => setWaterTypeFilter(value)} value={waterTypeFilter}>
-          <SelectTrigger id="water-type-filter" className="w-[180px]">
-            <SelectValue placeholder="生息地で絞り込み" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">すべて</SelectItem>
-            <SelectItem value="FRESHWATER">淡水</SelectItem>
-            <SelectItem value="SALTWATER">海水</SelectItem>
-            <SelectItem value="BRACKISH">汽水</SelectItem>
-          </SelectContent>
-        </Select>
+    <div className="mb-6">
+      <div className="flex flex-wrap gap-4 mb-4">
+        <div>
+          <label htmlFor="water-type-filter" className="block text-sm font-medium text-white mb-1">生息地</label>
+          <Select onValueChange={(value: any) => setWaterTypeFilter(value)} value={waterTypeFilter}>
+            <SelectTrigger id="water-type-filter" className="w-[180px]">
+              <SelectValue placeholder="生息地で絞り込み" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">すべて</SelectItem>
+              <SelectItem value="FRESHWATER">淡水</SelectItem>
+              <SelectItem value="SALTWATER">海水</SelectItem>
+              <SelectItem value="BRACKISH">汽水</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label htmlFor="alphabet-filter" className="block text-sm font-medium text-white mb-1">アイウエオ順</label>
+          <Select onValueChange={(value: any) => setAlphabetFilter(value)} value={alphabetFilter}>
+            <SelectTrigger id="alphabet-filter" className="w-[180px]">
+              <SelectValue placeholder="アイウエオ順で絞り込み" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">すべて</SelectItem>
+              <SelectItem value="ア">ア行</SelectItem>
+              <SelectItem value="カ">カ行</SelectItem>
+              <SelectItem value="サ">サ行</SelectItem>
+              <SelectItem value="タ">タ行</SelectItem>
+              <SelectItem value="ナ">ナ行</SelectItem>
+              <SelectItem value="ハ">ハ行</SelectItem>
+              <SelectItem value="マ">マ行</SelectItem>
+              <SelectItem value="ヤ">ヤ行</SelectItem>
+              <SelectItem value="ラ">ラ行</SelectItem>
+              <SelectItem value="ワ">ワ行</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label htmlFor="species-filter" className="block text-sm font-medium text-white mb-1">科目</label>
+          <Select onValueChange={(value: any) => setSpeciesFilter(value)} value={speciesFilter}>
+            <SelectTrigger id="species-filter" className="w-[180px]">
+              <SelectValue placeholder="科目で絞り込み" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">すべて</SelectItem>
+              {speciesList.map((species) => (
+                <SelectItem key={species} value={species}>{species}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-      <div>
-        <label htmlFor="alphabet-filter" className="block text-sm font-medium text-white mb-1">アイウエオ順</label>
-        <Select onValueChange={(value: any) => setAlphabetFilter(value)} value={alphabetFilter}>
-          <SelectTrigger id="alphabet-filter" className="w-[180px]">
-            <SelectValue placeholder="アイウエオ順で絞り込み" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">すべて</SelectItem>
-            <SelectItem value="ア">ア行</SelectItem>
-            <SelectItem value="カ">カ行</SelectItem>
-            <SelectItem value="サ">サ行</SelectItem>
-            <SelectItem value="タ">タ行</SelectItem>
-            <SelectItem value="ナ">ナ行</SelectItem>
-            <SelectItem value="ハ">ハ行</SelectItem>
-            <SelectItem value="マ">マ行</SelectItem>
-            <SelectItem value="ヤ">ヤ行</SelectItem>
-            <SelectItem value="ラ">ラ行</SelectItem>
-            <SelectItem value="ワ">ワ行</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <Button onClick={resetFilters} variant="alert" className="flex items-center text-black">
+        <RefreshCw className="mr-2 h-4 w-4 text-black" />
+        フィルターをリセット
+      </Button>
     </div>
   )
 }
 
 export default function FishListClient({ initialFishList }: FishListClientProps) {
-  const { filteredFishList, waterTypeFilter, alphabetFilter, setFishList, setWaterTypeFilter, setAlphabetFilter } = useFishStore()
+  const { filteredFishList, waterTypeFilter, alphabetFilter, speciesFilter, setFishList, setWaterTypeFilter, setAlphabetFilter, setSpeciesFilter, resetFilters } = useFishStore()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -109,8 +133,11 @@ export default function FishListClient({ initialFishList }: FishListClientProps)
       <FilterSection
         waterTypeFilter={waterTypeFilter}
         alphabetFilter={alphabetFilter}
+        speciesFilter={speciesFilter}
         setWaterTypeFilter={setWaterTypeFilter}
         setAlphabetFilter={setAlphabetFilter}
+        setSpeciesFilter={setSpeciesFilter}
+        resetFilters={resetFilters}
       />
 
       {(!filteredFishList || filteredFishList.length === 0) ? (

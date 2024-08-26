@@ -12,15 +12,18 @@ type Fish = {
 
 type WaterTypeFilter = 'ALL' | 'FRESHWATER' | 'SALTWATER' | 'BRACKISH'
 type AlphabetFilter = 'ALL' | 'ア' | 'カ' | 'サ' | 'タ' | 'ナ' | 'ハ' | 'マ' | 'ヤ' | 'ラ' | 'ワ'
+type SpeciesFilter = 'ALL' | string
 
 type FishStore = {
   fishList: Fish[]
   filteredFishList: Fish[]
   waterTypeFilter: WaterTypeFilter
   alphabetFilter: AlphabetFilter
+  speciesFilter: SpeciesFilter
   setFishList: (fishList: Fish[]) => void
   setWaterTypeFilter: (filter: WaterTypeFilter) => void
   setAlphabetFilter: (filter: AlphabetFilter) => void
+  setSpeciesFilter: (filter: SpeciesFilter) => void
   applyFilters: () => void
 }
 
@@ -29,6 +32,7 @@ export const useFishStore = create<FishStore>((set, get) => ({
   filteredFishList: [],
   waterTypeFilter: 'ALL',
   alphabetFilter: 'ALL',
+  speciesFilter: 'ALL',
   setFishList: (fishList) => {
     set({ fishList, filteredFishList: fishList })
   },
@@ -40,8 +44,12 @@ export const useFishStore = create<FishStore>((set, get) => ({
     set({ alphabetFilter: filter })
     get().applyFilters()
   },
+  setSpeciesFilter: (filter) => {
+    set({ speciesFilter: filter })
+    get().applyFilters()
+  },
   applyFilters: () => {
-    const { fishList, waterTypeFilter, alphabetFilter } = get()
+    const { fishList, waterTypeFilter, alphabetFilter, speciesFilter } = get()
     let filtered = fishList
 
     if (waterTypeFilter !== 'ALL') {
@@ -61,6 +69,18 @@ export const useFishStore = create<FishStore>((set, get) => ({
       })
     }
 
+    if (speciesFilter !== 'ALL') {
+      filtered = filtered.filter(fish => fish.species === speciesFilter)
+    }
+
     set({ filteredFishList: filtered })
+  },
+  resetFilters: () => {
+    set({
+      waterTypeFilter: 'ALL',
+      alphabetFilter: 'ALL',
+      speciesFilter: 'ALL'
+    })
+    get().applyFilters()
   }
 }))
