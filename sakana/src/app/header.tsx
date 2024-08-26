@@ -15,6 +15,7 @@ export default function Header() {
   const pathname = usePathname();
   const menuItems = [
     { href: "/", label: "ホーム" },
+    { href: "/register-fish", label: "魚登録" },
     { href: "/about", label: "魚図鑑について" },
     { href: "/contact", label: "お問い合わせ" },
   ]

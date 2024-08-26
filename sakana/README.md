@@ -37,3 +37,17 @@ GRANT ALL PRIVILEGES ON fish_encyclopedia_shadow.* TO 'your_username'@'%';
 FLUSH PRIVILEGES;
 EXIT;
 ```
+
+Prisma クライアントの生成:
+接続が成功したら、Prisma クライアントを生成します：
+
+```bash
+npx prisma generate
+```
+
+マイグレーションの実行（必要な場合）:
+データベーススキーマを更新する必要がある場合は、以下のコマンドを実行します：
+
+```bash
+npx prisma migrate dev
+```
