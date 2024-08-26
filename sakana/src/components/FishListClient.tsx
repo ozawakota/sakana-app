@@ -8,7 +8,19 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useFishStore } from '@/store/useFishStore'
-import { ChevronRight, RefreshCw } from 'lucide-react'
+import { ChevronRight, RefreshCw, Trash2 } from 'lucide-react'
+import { toast } from "@/components/ui/use-toast"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type Fish = {
   id: number
@@ -22,6 +34,7 @@ type Fish = {
 
 type FishListClientProps = {
   initialFishList: Fish[]
+  showDeleteButton: boolean
 }
 
 const speciesList = [
@@ -113,7 +126,7 @@ function FilterSection({ waterTypeFilter, alphabetFilter, speciesFilter, setWate
   )
 }
 
-export default function FishListClient({ initialFishList }: FishListClientProps) {
+export default function FishListClient({ initialFishList, showDeleteButton }: FishListClientProps) {
   const { filteredFishList, waterTypeFilter, alphabetFilter, speciesFilter, setFishList, setWaterTypeFilter, setAlphabetFilter, setSpeciesFilter, resetFilters } = useFishStore()
   const [isLoading, setIsLoading] = useState(true)
 
@@ -123,6 +136,31 @@ export default function FishListClient({ initialFishList }: FishListClientProps)
       setIsLoading(false)
     }
   }, [initialFishList, setFishList])
+
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`/api/fish/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('削除に失敗しました。')
+      }
+
+      setFishList(filteredFishList.filter(fish => fish.id !== id))
+      toast({
+        title: "削除完了",
+        description: "魚のデータが正常に削除されました。",
+      })
+    } catch (error) {
+      console.error('Error deleting fish:', error)
+      toast({
+        title: "削除失敗",
+        description: "魚の削除中にエラーが発生しました。もう一度お試しください。",
+        variant: "destructive",
+      })
+    }
+  }
 
   if (isLoading) {
     return <LoadingSkeleton />
@@ -156,14 +194,36 @@ export default function FishListClient({ initialFishList }: FishListClientProps)
               <CardContent>
                 <p className="text-sm text-gray-600 line-clamp-3">{fish.description}</p>
               </CardContent>
-              <CardFooter className="mt-auto">
-                <Button asChild variant="outline" className="w-full group hover:bg-blue-500 hover:text-white transition-colors duration-300">
+              <CardFooter className="mt-auto flex justify-between">
+                <Button asChild variant="outline" className="flex-1 mr-2 group hover:bg-blue-500 hover:text-white transition-colors duration-300">
                   <Link href={`/fish/${fish.id}`} className="flex items-center justify-center">
                     詳細を見る
                     <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                     <span className="sr-only">{fish.name}の詳細</span>
                   </Link>
                 </Button>
+                {showDeleteButton && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="icon">
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">{fish.name}を削除</span>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          この操作は取り消せません。{fish.name}のデータが完全に削除されます。
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDelete(fish.id)}>削除</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
               </CardFooter>
             </Card>
           ))}
