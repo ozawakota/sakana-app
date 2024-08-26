@@ -8,13 +8,14 @@ datasource db {
 }
 
 model Fish {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(255)
-  description String?  @db.Text
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  species     String    @db.VarChar(255)
   waterType   WaterType
-  species     String   @db.VarChar(255)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  imageUrl    String?   @db.VarChar(255)
 
   @@index([name])
   @@index([species])
