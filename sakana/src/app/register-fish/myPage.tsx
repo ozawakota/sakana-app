@@ -76,7 +76,7 @@ export default function RegisterFish() {
 
   return (
     <div className="flex items-center justify-center">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full sm:max-w-[725px]">
         <CardHeader>
           <CardTitle>お魚を登録</CardTitle>
           <CardDescription>図鑑に新しいお魚を登録します</CardDescription>
