@@ -162,7 +162,7 @@ export default function FishDetailClient({ fish }: FishDetailClientProps) {
                   編集
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[725px]">
                 <DialogHeader>
                   <DialogTitle>魚の情報を編集</DialogTitle>
                   <DialogDescription>
