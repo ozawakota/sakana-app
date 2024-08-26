@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useFishStore } from '@/store/useFishStore'
+import { ChevronRight } from 'lucide-react'
 
 type Fish = {
   id: number
@@ -25,7 +26,7 @@ type FishListClientProps = {
 
 function LoadingSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true" aria-label="魚のリストを読み込み中">
       {[...Array(6)].map((_, index) => (
         <Card key={index} className="flex flex-col">
           <CardHeader>
@@ -50,9 +51,9 @@ function FilterSection({ waterTypeFilter, alphabetFilter, setWaterTypeFilter, se
   return (
     <div className="mb-6 flex flex-wrap gap-4">
       <div>
-        <p className='text-white'>生息地</p>
+        <label htmlFor="water-type-filter" className="block text-sm font-medium text-white mb-1">生息地</label>
         <Select onValueChange={(value: any) => setWaterTypeFilter(value)} value={waterTypeFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger id="water-type-filter" className="w-[180px]">
             <SelectValue placeholder="生息地で絞り込み" />
           </SelectTrigger>
           <SelectContent>
@@ -64,9 +65,9 @@ function FilterSection({ waterTypeFilter, alphabetFilter, setWaterTypeFilter, se
         </Select>
       </div>
       <div>
-        <p className='text-white'>アイウエオ順</p>
+        <label htmlFor="alphabet-filter" className="block text-sm font-medium text-white mb-1">アイウエオ順</label>
         <Select onValueChange={(value: any) => setAlphabetFilter(value)} value={alphabetFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger id="alphabet-filter" className="w-[180px]">
             <SelectValue placeholder="アイウエオ順で絞り込み" />
           </SelectTrigger>
           <SelectContent>
@@ -84,7 +85,6 @@ function FilterSection({ waterTypeFilter, alphabetFilter, setWaterTypeFilter, se
           </SelectContent>
         </Select>
       </div>
-
     </div>
   )
 }
@@ -114,14 +114,14 @@ export default function FishListClient({ initialFishList }: FishListClientProps)
       />
 
       {(!filteredFishList || filteredFishList.length === 0) ? (
-        <div className="text-center py-8">
+        <div className="text-center py-8" role="alert">
           <p className="text-lg font-semibold text-gray-600">魚が見つかりません。</p>
           <p className="text-sm text-gray-500 mt-2">検索条件を変更してみてください。</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list" aria-label="魚のリスト">
           {filteredFishList.map((fish) => (
-            <Card key={fish.id} className="flex flex-col">
+            <Card key={fish.id} className="flex flex-col" role="listitem">
               <CardHeader>
                 <CardTitle>{fish.name}</CardTitle>
                 <CardDescription>{getWaterTypeJapanese(fish.waterType)}</CardDescription>
@@ -130,9 +130,11 @@ export default function FishListClient({ initialFishList }: FishListClientProps)
                 <p className="text-sm text-gray-600 line-clamp-3">{fish.description}</p>
               </CardContent>
               <CardFooter className="mt-auto">
-                <Button asChild variant="link">
-                  <Link href={`/fish/${fish.id}`}>
+                <Button asChild variant="outline" className="w-full group hover:bg-blue-500 hover:text-white transition-colors duration-300">
+                  <Link href={`/fish/${fish.id}`} className="flex items-center justify-center">
                     詳細を見る
+                    <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                    <span className="sr-only">{fish.name}の詳細</span>
                   </Link>
                 </Button>
               </CardFooter>
