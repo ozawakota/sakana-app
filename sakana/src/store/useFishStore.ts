@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { prisma } from '@/lib/prisma'
 
 type Fish = {
   id: number
@@ -11,29 +10,28 @@ type Fish = {
   updatedAt: Date
 }
 
+type WaterTypeFilter = 'ALL' | 'FRESHWATER' | 'SALTWATER' | 'BRACKISH'
+
 type FishStore = {
   fishList: Fish[]
-  isLoading: boolean
-  error: string | null
-  fetchFishList: () => Promise<void>
+  filteredFishList: Fish[]
+  waterTypeFilter: WaterTypeFilter
+  setFishList: (fishList: Fish[]) => void
+  setWaterTypeFilter: (filter: WaterTypeFilter) => void
 }
 
-export const useFishStore = create<FishStore>((set) => ({
+export const useFishStore = create<FishStore>((set, get) => ({
   fishList: [],
-  isLoading: false,
-  error: null,
-  fetchFishList: async () => {
-    set({ isLoading: true, error: null })
-    try {
-      const fish = await prisma.fish.findMany({
-        orderBy: {
-          name: 'asc',
-        },
-      })
-      set({ fishList: fish, isLoading: false })
-    } catch (error) {
-      console.error('Failed to fetch fish list:', error)
-      set({ error: 'Failed to fetch fish list', isLoading: false })
-    }
+  filteredFishList: [],
+  waterTypeFilter: 'ALL',
+  setFishList: (fishList) => {
+    set({ fishList, filteredFishList: fishList })
   },
+  setWaterTypeFilter: (filter) => {
+    const { fishList } = get()
+    const filteredFishList = filter === 'ALL' 
+      ? fishList 
+      : fishList.filter(fish => fish.waterType === filter)
+    set({ waterTypeFilter: filter, filteredFishList })
+  }
 }))

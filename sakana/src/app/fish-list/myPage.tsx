@@ -1,9 +1,6 @@
-import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import { getWaterTypeJapanese } from "@/lib/utils";
-
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-
+import FishListClient from '@/components/FishListClient'
+import { Button } from "@/components/ui/button"
 
 async function getFishList() {
   try {
@@ -24,24 +21,12 @@ export default async function FishList() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-white">魚図鑑一覧</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {fishList.map((fish) => (
-          <Card key={fish.id} className="flex flex-col">
-            <CardHeader>
-              <CardTitle>{fish.name}</CardTitle>
-              <CardDescription>{getWaterTypeJapanese(fish.waterType)}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 line-clamp-3">{fish.description}</p>
-            </CardContent>
-            <CardFooter className="mt-auto">
-              <Link href={`/fish/${fish.id}`} className="text-blue-600 hover:underline">
-                詳細を見る
-              </Link>
-            </CardFooter>
-          </Card>
-        ))}
+      <h1 className="text-3xl font-bold mb-6 text-white">魚一覧</h1>
+      <FishListClient initialFishList={fishList} />
+      <div className="mt-8">
+        <Button asChild>
+          <a href="/register-fish">新しい魚を登録</a>
+        </Button>
       </div>
     </div>
   )
