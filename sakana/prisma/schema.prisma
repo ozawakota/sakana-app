@@ -5,13 +5,23 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Fish {
   id          Int      @id @default(autoincrement())
-  name        String
-  description String?
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  waterType   WaterType
+  species     String   @db.VarChar(255)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([name])
+  @@index([species])
+}
+
+enum WaterType {
+  FRESHWATER
+  SALTWATER
+  BRACKISH
 }
