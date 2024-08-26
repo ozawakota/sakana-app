@@ -23,31 +23,52 @@ const speciesList = [
   "サケ科", "コイ科", "タイ科", "サバ科", "カレイ科", "ナマズ科", "スズキ科", "フグ科", "ウナギ科", "カサゴ科","その他"
 ]
 
-export default function registerFish() {
+export default function RegisterFish() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const { register, handleSubmit, control, formState: { errors }, setValue } = useForm<FormInputs>()
 
-  const onSubmit: SubmitHandler<FormInputs> = (data) => {
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    console.log(data,"data");
+    
     setIsLoading(true)
-    // Here you would typically send the form data to your backend
-    console.log(data)
-    setTimeout(() => {
-      setIsLoading(false)
-      toast({
-        title: "Fish Registered",
-        description: `${data.name} has been successfully added to the encyclopedia.`,
+    try {
+      const response = await fetch('/api/fish', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       })
-      router.push('/fish-list') // Assuming you have a page to list all fish
-    }, 2000)
+
+      if (!response.ok) {
+        throw new Error('Failed to register fish')
+      }
+
+      const result = await response.json()
+      toast({
+        title: "登録完了",
+        description: `${result.name}が図鑑に追加されました。`,
+      })
+      router.push('/fish-list')
+    } catch (error) {
+      console.error('Error registering fish:', error)
+      toast({
+        title: "登録失敗",
+        description: "魚の登録中にエラーが発生しました。もう一度お試しください。",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <div className="flex items-center justify-center min-h-scree">
+    <div className="flex items-center justify-center">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>お魚を登録</CardTitle>
-          <CardDescription>図鑑に新しいお魚をお魚を登録します</CardDescription>
+          <CardDescription>図鑑に新しいお魚を登録します</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -57,7 +78,7 @@ export default function registerFish() {
                 id="name"
                 {...register("name", {
                   required: "必須項目です",
-                  maxLength: { value: 255, message: "Name must be 255 characters or less" }
+                  maxLength: { value: 255, message: "255文字以内で入力してください" }
                 })}
                 placeholder="カサゴ"
               />
@@ -104,8 +125,8 @@ export default function registerFish() {
                         {...register("species")}
                         value={species}
                       />
-                      <Label 
-                        htmlFor={species} 
+                      <Label
+                        htmlFor={species}
                         className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         {species}
@@ -119,7 +140,6 @@ export default function registerFish() {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "登録中..." : "登録する"}
             </Button>
-
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
         name,
         description,
         waterType,
-        species: species.join(', '), // Convert array to comma-separated string
+        species: species.join(', '), // 配列を文字列に変換
       },
     });
 
