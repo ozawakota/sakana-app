@@ -23,6 +23,13 @@ const speciesList = [
   "サケ科", "アユ科", "コイ科", "タイ科", "サバ科", "カレイ科", "ナマズ科", "スズキ科", "フグ科", "ウナギ科", "カサゴ科", "ボラ科", "イシダイ科", "その他"
 ]
 
+function hiraganaToKatakana(str: string): string {
+  return str.replace(/[\u3041-\u3096]/g, function(match) {
+    const chr = match.charCodeAt(0) + 0x60;
+    return String.fromCharCode(chr);
+  });
+}
+
 export default function RegisterFish() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -32,12 +39,18 @@ export default function RegisterFish() {
 
     setIsLoading(true)
     try {
+
+      const convertedData = {
+        ...data,
+        name: hiraganaToKatakana(data.name)
+      }
+
       const response = await fetch('/api/fish', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(convertedData),
       })
 
       if (!response.ok) {
@@ -72,7 +85,7 @@ export default function RegisterFish() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <Label htmlFor="name">名前</Label>
+              <Label htmlFor="name">名前（カタカナ）</Label>
               <Input
                 id="name"
                 {...register("name", {
