@@ -4,6 +4,7 @@ import { Noto_Sans_JP } from "next/font/google";
 import clsx from "clsx";
 import "./globals.css";
 import Header from "./header";
+import Footer from "./footer";
 import { Toaster } from "@/components/ui/toaster"
 
 const notoSansJP = Noto_Sans_JP({
@@ -50,6 +51,7 @@ export default function RootLayout({
               </div>
             </main>
             <Toaster />
+            <Footer/>
           </div>
         </ThemeProvider>
       </body>
