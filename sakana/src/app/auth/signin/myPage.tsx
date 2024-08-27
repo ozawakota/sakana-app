@@ -15,6 +15,11 @@ export default function SignIn() {
 
   useEffect(() => {
     if (status === 'authenticated') {
+      toast({
+        title: "ログイン成功",
+        description: "魚図鑑へようこそ！",
+        duration: 3000,
+      })
       router.push('/')
     }
   }, [status, router])
