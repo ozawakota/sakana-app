@@ -18,7 +18,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
-
 const formSchema = z.object({
   username: z
     .string()
@@ -35,20 +34,16 @@ const formSchema = z.object({
     }),
 })
 
-
 export default function Tweet() {
-
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
+      content: "",
     },
   })
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(data, "値")
     toast({
       title: "成功：以下のデータを送信します",
@@ -58,13 +53,12 @@ export default function Tweet() {
         </pre>
       ),
     })
-
   }
 
   return (
     <section className="p-4">
       <div className="">
-        <h1 className="text-2xl font-bold mb-4 md:mb-10 text-white">お問い合わせ</h1>
+        <h1 className="text-2xl font-bold mb-4 md:mb-10 text-white">ツイートする</h1>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -104,15 +98,10 @@ export default function Tweet() {
                 </FormItem>
               )}
             />
-            <Button type="submit">送信</Button>
+            <Button type="submit" variant="success">ツイート！</Button>
           </form>
         </Form>
-
-
-    
       </div>
-
-
     </section>
   );
 }
