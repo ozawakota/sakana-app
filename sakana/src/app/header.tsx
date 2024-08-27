@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from "react"
+import Image from "next/image"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, LogIn, LogOut } from "lucide-react"
+import { Menu, LogIn, LogOut, User } from "lucide-react"
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useSession, signOut } from "next-auth/react"
 import { toast } from "@/components/ui/use-toast"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 function LoginLogoutButton() {
   const { data: session } = useSession();
@@ -53,6 +55,17 @@ function LoginLogoutButton() {
   );
 }
 
+function UserAvatar({ image }: { image: string | null | undefined }) {
+  return (
+    <Avatar>
+      <AvatarImage src={image || undefined} alt="User avatar" />
+      <AvatarFallback>
+        <User className="h-5 w-5" />
+      </AvatarFallback>
+    </Avatar>
+  )
+}
+
 export default function Header() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname();
@@ -92,6 +105,9 @@ export default function Header() {
                 </li>
               ))}
             </ul>
+            {session && (
+              <UserAvatar image={session.user?.image} />
+            )}
             <LoginLogoutButton />
           </nav>
           <div className="hidden lg:block ml-4">
@@ -121,6 +137,11 @@ export default function Header() {
                     {item.label}
                   </Link>
                 ))}
+                {session && (
+                  <div className="flex justify-center">
+                    <UserAvatar image={session.user?.image} />
+                  </div>
+                )}
                 <div className="flex justify-center mt-4">
                   <LoginLogoutButton />
                 </div>
