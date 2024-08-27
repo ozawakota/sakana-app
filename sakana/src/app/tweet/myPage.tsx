@@ -106,6 +106,7 @@ function TweetList() {
 export default function Tweet() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -130,6 +131,8 @@ export default function Tweet() {
       })
       return
     }
+
+    setIsSubmitting(true)
 
     try {
       const response = await fetch('/api/tweet', {
@@ -163,9 +166,11 @@ export default function Tweet() {
       console.error('Failed to create tweet:', error)
       toast({
         title: "エラー",
-        description: `ツイートの投稿に失敗しました: ${error.message}`,
+        description: `ツイートの投稿に失敗しました: ${error instanceof Error ? error.message : '不明なエラー'}`,
         variant: "destructive",
       })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -226,7 +231,16 @@ export default function Tweet() {
                 </FormItem>
               )}
             />
-            <Button type="submit" variant="success">ツイート！</Button>
+            <Button type="submit" variant="success" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  投稿中...
+                </>
+              ) : (
+                'ツイート！'
+              )}
+            </Button>
           </form>
         </Form>
 
