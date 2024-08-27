@@ -105,10 +105,11 @@ export default function Header() {
                 </li>
               ))}
             </ul>
+            <LoginLogoutButton />
             {session && (
               <UserAvatar image={session.user?.image} />
             )}
-            <LoginLogoutButton />
+
           </nav>
           <div className="hidden lg:block ml-4">
             <ThemeToggle />
@@ -137,14 +138,14 @@ export default function Header() {
                     {item.label}
                   </Link>
                 ))}
+                <div className="flex justify-center mt-4">
+                  <LoginLogoutButton />
+                </div>
                 {session && (
                   <div className="flex justify-center">
                     <UserAvatar image={session.user?.image} />
                   </div>
                 )}
-                <div className="flex justify-center mt-4">
-                  <LoginLogoutButton />
-                </div>
               </nav>
               <div className="flex justify-center mt-10">
                 <ThemeToggle />
