@@ -135,7 +135,7 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
     }
   }, [initialFishList, setFishList])
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number, name: string) => {
     try {
       const response = await fetch(`/api/fish/${id}`, {
         method: 'DELETE',
@@ -148,7 +148,7 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
       setFishList(filteredFishList.filter(fish => fish.id !== id))
       toast({
         title: "削除完了",
-        description: "魚のデータが正常に削除されました。",
+        description: `${name}のデータが正常に削除されました。`,
       })
     } catch (error) {
       console.error('Error deleting fish:', error)
@@ -217,7 +217,7 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(fish.id)}>削除</AlertDialogAction>
+                        <AlertDialogAction onClick={() => handleDelete(fish.id, fish.name)}>削除</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
