@@ -1,8 +1,8 @@
 import MyPage from "./myPage"
 
 export const metadata = {
-  title: "お問い合わせページ",
-  description: "お問い合わせページ",
+  title: "ツイートページ",
+  description: "ツイートページ",
 }
 
 const Tweet = () => {
