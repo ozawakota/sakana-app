@@ -18,11 +18,14 @@ function LoginLogoutButton() {
 
   const handleLoginLogout = async () => {
     if (session) {
-      await signOut({ callbackUrl: '/' });
       toast({
         title: "ログアウト成功",
         description: "ログアウトしました。またのご利用をお待ちしております。",
       });
+      setTimeout(async () => {
+        await signOut({ redirect: true });
+        router.push('/');
+      }, 1000);
     } else {
       router.push('/auth/signin');
     }
