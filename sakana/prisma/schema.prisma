@@ -7,15 +7,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  username      String   @unique
+  password      String
+  firstName     String?
+  lastName      String?
+  role          Role     @default(USER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lastLoginAt   DateTime?
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
 model Fish {
   id          Int       @id @default(autoincrement())
-  name        String    @db.VarChar(255)
+  name        String    @unique
   description String?   @db.Text
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
   species     String    @db.VarChar(255)
   waterType   WaterType
-  imageUrl    String?   @db.VarChar(255)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([name])
   @@index([species])

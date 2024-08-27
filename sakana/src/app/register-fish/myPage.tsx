@@ -13,14 +13,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "@/components/ui/use-toast"
 import { speciesList } from "@/lib/common"
 
-
 type FormInputs = {
   name: string
   description: string
   waterType: 'FRESHWATER' | 'SALTWATER' | 'BRACKISH'
   species: string
 }
-
 
 function hiraganaToKatakana(str: string): string {
   return str.replace(/[\u3041-\u3096]/g, function(match) {
@@ -32,13 +30,11 @@ function hiraganaToKatakana(str: string): string {
 export default function RegisterFish() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const { register, handleSubmit, control, formState: { errors }, setValue } = useForm<FormInputs>()
-
+  const { register, handleSubmit, control, formState: { errors }, setValue, setError } = useForm<FormInputs>()
+  
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-
     setIsLoading(true)
     try {
-
       const convertedData = {
         ...data,
         name: hiraganaToKatakana(data.name)
@@ -53,7 +49,12 @@ export default function RegisterFish() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to register fish')
+        const errorData = await response.json()
+        if (response.status === 400 && errorData.error === 'A fish with this name already exists') {
+          setError('name', { type: 'manual', message: '魚の名前が既に登録されています' })
+          throw new Error('魚の名前が既に登録されています')
+        }
+        throw new Error(errorData.error || 'Failed to register fish')
       }
 
       const result = await response.json()
@@ -64,11 +65,21 @@ export default function RegisterFish() {
       router.push('/fish-list')
     } catch (error) {
       console.error('Error registering fish:', error)
-      toast({
-        title: "登録失敗",
-        description: "魚の登録中にエラーが発生しました。もう一度お試しください。",
-        variant: "destructive",
-      })
+      if (error instanceof Error) {
+        if (error.message === '魚の名前が既に登録されています') {
+          toast({
+            title: "登録失敗",
+            description: error.message,
+            variant: "destructive",
+          })
+        } else {
+          toast({
+            title: "登録失敗",
+            description: "魚の登録中にエラーが発生しました。もう一度お試しください。",
+            variant: "destructive",
+          })
+        }
+      }
     } finally {
       setIsLoading(false)
     }
@@ -92,6 +103,7 @@ export default function RegisterFish() {
                   maxLength: { value: 255, message: "255文字以内で入力してください" }
                 })}
                 placeholder="カサゴ"
+                className={errors.name ? "border-red-500" : ""}
               />
               {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
             </div>
