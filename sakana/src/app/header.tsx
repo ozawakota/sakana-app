@@ -2,18 +2,25 @@
 
 import { useState } from "react"
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Menu, LogIn, LogOut } from "lucide-react"
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { useSession, signOut } from "next-auth/react"
 
 function LoginLogoutButton() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
 
-  const handleLoginLogout = () => {
-    setIsLoggedIn(!isLoggedIn);
+  const handleLoginLogout = async () => {
+    if (session) {
+      await signOut({ callbackUrl: '/' });
+    } else {
+      router.push('/auth/signin');
+    }
   };
 
   return (
@@ -23,7 +30,7 @@ function LoginLogoutButton() {
       onClick={handleLoginLogout}
       className="flex items-center gap-2"
     >
-      {isLoggedIn ? (
+      {session ? (
         <>
           <LogOut className="h-4 w-4" />
           ログアウト
@@ -41,9 +48,11 @@ function LoginLogoutButton() {
 export default function Header() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname();
+  const { data: session } = useSession();
+
   const menuItems = [
     { href: "/", label: "ホーム" },
-    { href: "/register-fish", label: "魚登録" },
+    ...(session ? [{ href: "/register-fish", label: "魚登録" }] : []),
     { href: "/about", label: "魚図鑑について" },
     { href: "/contact", label: "お問い合わせ" },
   ]

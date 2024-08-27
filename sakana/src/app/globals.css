@@ -102,3 +102,7 @@ animation: bggradient 15s ease infinite;
     margin-inline: auto;
   }
 }
+
+body {
+  overflow: auto !important;
+}

@@ -7,32 +7,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  username      String   @unique
-  password      String
-  firstName     String?
-  lastName      String?
-  role          Role     @default(USER)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  lastLoginAt   DateTime?
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
-enum Role {
-  USER
-  ADMIN
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Session_userId_fkey")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  name          String?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model Fish {
   id          Int       @id @default(autoincrement())
   name        String    @unique
   description String?   @db.Text
-  species     String    @db.VarChar(255)
-  waterType   WaterType
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  species     String    @db.VarChar(255)
+  waterType   WaterType
 
   @@index([name])
   @@index([species])
