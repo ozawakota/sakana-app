@@ -36,7 +36,7 @@ const formSchema = z.object({
 })
 
 
-export default function Contact() {
+export default function Tweet() {
 
 
   const form = useForm<z.infer<typeof formSchema>>({

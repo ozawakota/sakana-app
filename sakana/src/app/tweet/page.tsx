@@ -5,8 +5,8 @@ export const metadata = {
   description: "お問い合わせページ",
 }
 
-const Contact = () => {
+const Tweet = () => {
     return <MyPage/>
 }
 
-export default Contact
+export default Tweet

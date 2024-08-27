@@ -29,7 +29,7 @@ export default function Footer() {
               {session && (
                 <li><Link href="/register-fish" className="text-sm  hover:text-blue-600">新しい魚を登録</Link></li>
               )}
-              <li><Link href="/contact" className="text-sm  hover:text-blue-600">お問い合わせ</Link></li>
+              <li><Link href="/tweet" className="text-sm  hover:text-blue-600">ツイート</Link></li>
             </ul>
           </div>
           <div>

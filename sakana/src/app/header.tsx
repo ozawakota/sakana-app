@@ -75,7 +75,7 @@ export default function Header() {
     { href: "/", label: "ホーム" },
     ...(session ? [{ href: "/register-fish", label: "魚登録" }] : []),
     { href: "/about", label: "魚図鑑について" },
-    { href: "/contact", label: "お問い合わせ" },
+    { href: "/tweet", label: "ツイート" },
   ]
 
   return (
