@@ -39,7 +39,6 @@ type FishListClientProps = {
   showDeleteButton: boolean
 }
 
-
 function LoadingSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true" aria-label="魚のリストを読み込み中">
@@ -69,7 +68,7 @@ function FilterSection({ waterTypeFilter, alphabetFilter, speciesFilter, setWate
       <div className="flex flex-wrap gap-4 mb-4">
         <div>
           <label htmlFor="water-type-filter" className="block text-sm font-medium text-white mb-1">生息地</label>
-          <Select onValueChange={(value: any) => setWaterTypeFilter(value)} value={waterTypeFilter}>
+          <Select onValueChange={setWaterTypeFilter} value={waterTypeFilter}>
             <SelectTrigger id="water-type-filter" className="w-[180px]">
               <SelectValue placeholder="生息地で絞り込み" />
             </SelectTrigger>
@@ -83,7 +82,7 @@ function FilterSection({ waterTypeFilter, alphabetFilter, speciesFilter, setWate
         </div>
         <div>
           <label htmlFor="alphabet-filter" className="block text-sm font-medium text-white mb-1">アイウエオ順</label>
-          <Select onValueChange={(value: any) => setAlphabetFilter(value)} value={alphabetFilter}>
+          <Select onValueChange={setAlphabetFilter} value={alphabetFilter}>
             <SelectTrigger id="alphabet-filter" className="w-[180px]">
               <SelectValue placeholder="アイウエオ順で絞り込み" />
             </SelectTrigger>
@@ -104,7 +103,7 @@ function FilterSection({ waterTypeFilter, alphabetFilter, speciesFilter, setWate
         </div>
         <div>
           <label htmlFor="species-filter" className="block text-sm font-medium text-white mb-1">科目</label>
-          <Select onValueChange={(value: any) => setSpeciesFilter(value)} value={speciesFilter}>
+          <Select onValueChange={setSpeciesFilter} value={speciesFilter}>
             <SelectTrigger id="species-filter" className="w-[180px]">
               <SelectValue placeholder="科目で絞り込み" />
             </SelectTrigger>
