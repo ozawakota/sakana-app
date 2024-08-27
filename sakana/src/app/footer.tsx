@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Facebook, Twitter, Instagram, Github } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 
 export default function Footer() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear())
+  const { data: session } = useSession()
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -24,7 +26,9 @@ export default function Footer() {
             <ul className="space-y-2">
               <li><Link href="/" className="text-sm text-gray-600 hover:text-blue-600">ホーム</Link></li>
               <li><Link href="/fish-list" className="text-sm text-gray-600 hover:text-blue-600">魚一覧</Link></li>
-              <li><Link href="/register-fish" className="text-sm text-gray-600 hover:text-blue-600">新しい魚を登録</Link></li>
+              {session && (
+                <li><Link href="/register-fish" className="text-sm text-gray-600 hover:text-blue-600">新しい魚を登録</Link></li>
+              )}
               <li><Link href="/contact" className="text-sm text-gray-600 hover:text-blue-600">お問い合わせ</Link></li>
             </ul>
           </div>
