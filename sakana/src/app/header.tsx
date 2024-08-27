@@ -2,13 +2,41 @@
 
 import { useState } from "react"
 import Link from "next/link";
-import { Menu } from "lucide-react"
+import { Menu, LogIn, LogOut } from "lucide-react"
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
+function LoginLogoutButton() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLoginLogout = () => {
+    setIsLoggedIn(!isLoggedIn);
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleLoginLogout}
+      className="flex items-center gap-2"
+    >
+      {isLoggedIn ? (
+        <>
+          <LogOut className="h-4 w-4" />
+          ログアウト
+        </>
+      ) : (
+        <>
+          <LogIn className="h-4 w-4" />
+          ログイン
+        </>
+      )}
+    </Button>
+  );
+}
 
 export default function Header() {
   const [open, setOpen] = useState(false)
@@ -29,8 +57,8 @@ export default function Header() {
           </Link>
         </h1>
         <div className="flex items-center relative">
-          <nav className="p-4 hidden lg:block">
-            <ul className="lg:flex select-none gap-4 md:gap-4">
+          <nav className="p-4 hidden lg:flex items-center gap-4">
+            <ul className="flex select-none gap-4">
               {menuItems.map((item) => (
                 <li key={item.href}>
                   <Link
@@ -47,8 +75,9 @@ export default function Header() {
                 </li>
               ))}
             </ul>
+            <LoginLogoutButton />
           </nav>
-          <div className="hidden lg:block">
+          <div className="hidden lg:block ml-4">
             <ThemeToggle />
           </div>
           <Sheet open={open} onOpenChange={setOpen}>
@@ -75,16 +104,17 @@ export default function Header() {
                     {item.label}
                   </Link>
                 ))}
+                <div className="flex justify-center mt-4">
+                  <LoginLogoutButton />
+                </div>
               </nav>
               <div className="flex justify-center mt-10">
-              <ThemeToggle />
+                <ThemeToggle />
               </div>
-              
             </SheetContent>
           </Sheet>
         </div>
       </div>
     </header>
   )
-
 }
