@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useSession, signOut } from "next-auth/react"
+import { toast } from "@/components/ui/use-toast"
 
 function LoginLogoutButton() {
   const { data: session } = useSession();
@@ -18,6 +19,10 @@ function LoginLogoutButton() {
   const handleLoginLogout = async () => {
     if (session) {
       await signOut({ callbackUrl: '/' });
+      toast({
+        title: "ログアウト成功",
+        description: "ログアウトしました。またのご利用をお待ちしております。",
+      });
     } else {
       router.push('/auth/signin');
     }
