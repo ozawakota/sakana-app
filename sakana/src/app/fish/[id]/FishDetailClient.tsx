@@ -42,6 +42,8 @@ import { toast } from "@/components/ui/use-toast"
 
 import { speciesList } from "@/lib/common"
 
+
+
 type FishDetailClientProps = {
   fish: {
     id: number
