@@ -15,7 +15,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 interface TweetData {
@@ -36,7 +35,6 @@ export default function TweetList() {
   const [tweetToEdit, setTweetToEdit] = useState<TweetData | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editedContent, setEditedContent] = useState("");
-  const [editedNickname, setEditedNickname] = useState("");
   const [editError, setEditError] = useState<string | null>(null);
 
   async function fetchTweets() {
@@ -111,7 +109,6 @@ export default function TweetList() {
         },
         body: JSON.stringify({
           content: editedContent.trim(),
-          nickname: editedNickname.trim() || null,
         }),
       });
 
@@ -147,7 +144,6 @@ export default function TweetList() {
   function handleEditClick(tweet: TweetData) {
     setTweetToEdit(tweet);
     setEditedContent(tweet.content);
-    setEditedNickname(tweet.nickname || "");
     setEditError(null);
     setIsEditDialogOpen(true);
   }
@@ -225,15 +221,6 @@ export default function TweetList() {
             <DialogTitle>ツイートの編集</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="edit-nickname">ニックネーム</Label>
-              <Input
-                id="edit-nickname"
-                value={editedNickname}
-                onChange={(e) => setEditedNickname(e.target.value)}
-                placeholder="ニックネーム"
-              />
-            </div>
             <div>
               <Label htmlFor="edit-content">内容</Label>
               <Textarea
