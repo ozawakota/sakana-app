@@ -41,7 +41,7 @@ type FishListClientProps = {
 
 function LoadingSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true" aria-label="魚のリストを読み込み中">
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true" aria-label="魚のリストを読み込み中">
       {[...Array(6)].map((_, index) => (
         <Card key={index} className="flex flex-col">
           <CardHeader>
@@ -182,7 +182,7 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
           <p className="text-sm text-gray-500 mt-2">検索条件を変更してみてください。</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list" aria-label="魚のリスト">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6" role="list" aria-label="魚のリスト">
           {filteredFishList.map((fish) => (
             <Card key={fish.id} className="flex flex-col" role="listitem">
               <CardHeader>
