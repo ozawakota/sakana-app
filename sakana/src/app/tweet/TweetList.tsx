@@ -228,6 +228,7 @@ export default function TweetList() {
                 value={editedContent}
                 onChange={(e) => setEditedContent(e.target.value)}
                 placeholder="ツイート内容"
+                className='mt-2'
               />
               {editError && <p className="text-red-500 text-sm mt-1">{editError}</p>}
             </div>
