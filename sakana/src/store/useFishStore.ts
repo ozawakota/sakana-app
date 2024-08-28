@@ -1,14 +1,8 @@
 import { create } from 'zustand'
+// 型定義
+import { Fish } from '@/types/model'
 
-type Fish = {
-  id: number
-  name: string
-  description: string | null
-  waterType: 'FRESHWATER' | 'SALTWATER' | 'BRACKISH'
-  species: string
-  createdAt: Date
-  updatedAt: Date
-}
+
 
 type WaterTypeFilter = 'ALL' | 'FRESHWATER' | 'SALTWATER' | 'BRACKISH'
 type AlphabetFilter = 'ALL' | 'ア' | 'カ' | 'サ' | 'タ' | 'ナ' | 'ハ' | 'マ' | 'ヤ' | 'ラ' | 'ワ'

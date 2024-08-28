@@ -24,15 +24,10 @@ import {
 
 import { speciesList } from "@/lib/common"
 
-type Fish = {
-  id: number
-  name: string
-  description: string | null
-  waterType: 'FRESHWATER' | 'SALTWATER' | 'BRACKISH'
-  species: string
-  createdAt: Date
-  updatedAt: Date
-}
+// 型定義
+import { Fish } from '@/types/model'
+
+
 
 type FishListClientProps = {
   initialFishList: Fish[]

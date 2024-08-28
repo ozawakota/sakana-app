@@ -1,22 +1,11 @@
-// components/TweetListClient.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+// 型定義
+import { Tweet } from '@/types/model'
 
-import Link from 'next/link'
-
-type Tweet = {
-  id: number
-  content: string
-  nickname: string | null
-  createdAt: string
-  user: {
-    name: string | null
-  }
-}
 
 type TweetListClientProps = {
   initialTweetList: Tweet[]
@@ -48,7 +37,6 @@ export default function TweetListClient({ initialTweetList }: TweetListClientPro
   const [tweets, setTweets] = useState<Tweet[]>(initialTweetList)
   const [isLoading, setIsLoading] = useState(false)
 
-
   useEffect(() => {
     setTweets(initialTweetList)
   }, [initialTweetList])
@@ -62,7 +50,6 @@ export default function TweetListClient({ initialTweetList }: TweetListClientPro
       <div className="text-center py-8" role="alert">
         <p className="text-lg font-semibold text-gray-600">まだツイートがありません。</p>
         <p className="text-sm text-gray-500 mt-2">最初のツイートを投稿してみましょう！</p>
-
       </div>
     )
   }
@@ -72,14 +59,14 @@ export default function TweetListClient({ initialTweetList }: TweetListClientPro
       {tweets.map((tweet) => (
         <Card key={tweet.id} className="flex flex-col" role="listitem">
           <CardHeader>
-            <CardTitle>{tweet.nickname || '名無しさん'}</CardTitle>
+            <CardTitle>{tweet.nickname || tweet.user.name || '名無しさん'}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-600 line-clamp-3">{tweet.content}</p>
           </CardContent>
           <CardFooter className="mt-auto">
             <p className="text-xs text-gray-500">
-              {new Date(tweet.createdAt).toLocaleString()}
+              {tweet.createdAt.toLocaleString()}
             </p>
           </CardFooter>
         </Card>
