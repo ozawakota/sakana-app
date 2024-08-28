@@ -1,4 +1,4 @@
-export type Fish = {
+export type FishModel = {
   id: number
   name: string
   description: string | null
@@ -9,7 +9,7 @@ export type Fish = {
 }
 
 
-export type Tweet = {
+export type TweetModel = {
   id: number
   content: string
   nickname: string | null

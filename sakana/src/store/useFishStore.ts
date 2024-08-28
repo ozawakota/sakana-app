@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 // 型定義
-import { Fish } from '@/types/model'
+import { FishModel } from '@/types/model'
 
 
 
@@ -9,12 +9,12 @@ type AlphabetFilter = 'ALL' | 'ア' | 'カ' | 'サ' | 'タ' | 'ナ' | 'ハ' | '�
 type SpeciesFilter = 'ALL' | string
 
 type FishStore = {
-  fishList: Fish[]
-  filteredFishList: Fish[]
+  fishList: FishModel[]
+  filteredFishList: FishModel[]
   waterTypeFilter: WaterTypeFilter
   alphabetFilter: AlphabetFilter
   speciesFilter: SpeciesFilter
-  setFishList: (fishList: Fish[]) => void
+  setFishList: (fishList: FishModel[]) => void
   setWaterTypeFilter: (filter: WaterTypeFilter) => void
   setAlphabetFilter: (filter: AlphabetFilter) => void
   setSpeciesFilter: (filter: SpeciesFilter) => void

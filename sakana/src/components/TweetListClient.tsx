@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react'
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { MessageCircle, Heart, Repeat2, Share2 } from "lucide-react"
 // 型定義
-import { Tweet } from '@/types/model'
+import { TweetModel } from '@/types/model'
 
 type TweetListClientProps = {
-  initialTweetList: Tweet[]
+  initialTweetList: TweetModel[]
 }
 
 function LoadingSkeleton() {
@@ -33,7 +32,7 @@ function LoadingSkeleton() {
 }
 
 export default function TweetListClient({ initialTweetList }: TweetListClientProps) {
-  const [tweets, setTweets] = useState<Tweet[]>(initialTweetList)
+  const [tweets, setTweets] = useState<TweetModel[]>(initialTweetList)
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {

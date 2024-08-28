@@ -25,12 +25,12 @@ import {
 import { speciesList } from "@/lib/common"
 
 // 型定義
-import { Fish } from '@/types/model'
+import { FishModel } from '@/types/model'
 
 
 
 type FishListClientProps = {
-  initialFishList: Fish[]
+  initialFishList: FishModel[]
   showDeleteButton: boolean
 }
 

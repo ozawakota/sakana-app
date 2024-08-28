@@ -42,18 +42,15 @@ import { toast } from "@/components/ui/use-toast"
 
 import { speciesList } from "@/lib/common"
 
+// 型定義
+import { FishModel } from '@/types/model'
+
+
+
 
 
 type FishDetailClientProps = {
-  fish: {
-    id: number
-    name: string
-    description: string | null
-    waterType: 'FRESHWATER' | 'SALTWATER' | 'BRACKISH'
-    species: string
-    createdAt: Date
-    updatedAt: Date
-  }
+  fish: FishModel
 }
 
 export default function FishDetailClient({ fish }: FishDetailClientProps) {
