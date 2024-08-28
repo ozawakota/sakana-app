@@ -9,7 +9,6 @@ import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
-
 import {
   Form,
   FormControl,
@@ -21,7 +20,7 @@ import {
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import TweetList from './TweetList'
 
 const formSchema = z.object({
   content: z
@@ -42,71 +41,11 @@ const formSchema = z.object({
     }),
 })
 
-interface TweetData {
-  id: number;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-  nickname: string | null;
-}
-
-function TweetList() {
-  const [tweets, setTweets] = useState<TweetData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchTweets() {
-      try {
-        const response = await fetch('/api/tweets');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setTweets(data);
-      } catch (error) {
-        console.error('Failed to fetch tweets:', error);
-        toast({
-          title: "エラー",
-          description: "ツイートの取得に失敗しました。",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchTweets();
-  }, []);
-
-  if (isLoading) {
-    return <Loader2 className="h-8 w-8 animate-spin text-primary" aria-label="ツイートを読み込み中" />;
-  }
-
-  return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold text-white">最新のツイート</h2>
-      {tweets.map((tweet) => (
-        <Card key={tweet.id}>
-          <CardHeader>
-            <CardTitle>{tweet.nickname || '名無しさん'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>{tweet.content}</p>
-            <p className="text-sm text-gray-500 mt-2">
-              {new Date(tweet.createdAt).toLocaleString()}
-            </p>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
 export default function Tweet() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [tweetListKey, setTweetListKey] = useState(0)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -159,6 +98,11 @@ export default function Tweet() {
           description: "ツイートが投稿されました。",
         })
         form.reset({ nickname: data.nickname, content: "" })
+        
+        // Set a timeout to trigger the TweetList reconstruction after 1 second
+        setTimeout(() => {
+          setTweetListKey(prevKey => prevKey + 1)
+        }, 1000)
       } else {
         throw new Error(result.error || 'Unknown error occurred')
       }
@@ -238,13 +182,13 @@ export default function Tweet() {
                   投稿中...
                 </>
               ) : (
-                'ツイート！'
+                'ツイートする'
               )}
             </Button>
           </form>
         </Form>
-
-        <TweetList />
+        <h2 className="text-xl font-bold text-white">あなたの過去の投稿</h2>
+        <TweetList key={tweetListKey} />
       </div>
     </section>
   )
