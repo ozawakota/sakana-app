@@ -21,6 +21,24 @@ export default function About() {
             </dd>
           </dl>
         </div>
+        <div className="text-white mb-16">
+          <dl>
+            <dt className="text-xl font-bold pb-4">今後の予定追加機能(2024/8/28 現在)</dt>
+            <dd>
+              <ul>
+                <li>魚の疑問 </li>
+                <li>魚の写真投稿 </li>
+                <li>魚の統計 </li>
+                <li>魚の特徴 </li>
+                <li>魚の釣種 </li>
+                <li>お魚ニュース </li>
+                <li>お魚のレシピ動画 </li>
+                <li>魚の動画 </li>
+              </ul>
+            </dd>
+          </dl>
+        </div>
+
       </div>
     </section>
   );

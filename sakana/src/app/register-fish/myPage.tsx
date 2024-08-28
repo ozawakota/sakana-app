@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState , useEffect} from 'react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
+import { Loader2 } from "lucide-react"
 import { speciesList } from "@/lib/common"
 
 type FormInputs = {
@@ -28,10 +30,18 @@ function hiraganaToKatakana(str: string): string {
 }
 
 export default function RegisterFish() {
+  const { data: session, status } = useSession()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const { register, handleSubmit, control, formState: { errors }, setValue, setError } = useForm<FormInputs>()
   
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/')
+    }
+  }, [status, router])
+
+
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     setIsLoading(true)
     try {
@@ -84,6 +94,19 @@ export default function RegisterFish() {
       setIsLoading(false)
     }
   }
+
+  if (status === 'loading') {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" aria-label="読み込み中" />
+      </div>
+    )
+  }
+
+  if (!session) {
+    return null
+  }
+
 
   return (
     <div className="flex items-center justify-center">

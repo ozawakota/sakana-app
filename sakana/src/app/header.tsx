@@ -74,6 +74,7 @@ export default function Header() {
   const menuItems = [
     { href: "/", label: "ホーム" },
     ...(session ? [{ href: "/register-fish", label: "魚登録" }] : []),
+    { href: "/fish-list", label: "魚一覧" },
     { href: "/about", label: "魚図鑑について" },
     ...(session ? [{ href: "/tweet", label: "ツイート" }] : []),
   ]
