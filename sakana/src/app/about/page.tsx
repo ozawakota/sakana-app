@@ -1,8 +1,8 @@
 import MyPage from "./myPage"
 
 export const metadata = {
-  title: "Aboutページ",
-  description: "Aboutページ",
+  title: "魚図鑑についてページ",
+  description: "魚図鑑についてページ",
 }
 
 const About = () => {
