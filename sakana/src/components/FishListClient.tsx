@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { getWaterTypeJapanese } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Skeleton } from "@/components/ui/skeleton"
 import { useFishStore } from '@/store/useFishStore'
 import { ChevronRight, RefreshCw, Trash2 } from 'lucide-react'
 import { toast } from "@/components/ui/use-toast"
@@ -23,41 +22,34 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { speciesList } from "@/lib/common"
-
-// 型定義
 import { FishModel } from '@/types/model'
+import { WaterType, AlphabetFilter } from '@/types/store'
+import { LoadingSkeleton } from './LoadingSkeleton'
 
-
+type FilterSectionProps = {
+  waterTypeFilter: WaterType
+  alphabetFilter: AlphabetFilter
+  speciesFilter: string
+  setWaterTypeFilter: (value: WaterType) => void
+  setAlphabetFilter: (value: AlphabetFilter) => void
+  setSpeciesFilter: (value: string) => void
+  resetFilters: () => void
+}
 
 type FishListClientProps = {
   initialFishList: FishModel[]
   showDeleteButton: boolean
 }
 
-function LoadingSkeleton() {
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true" aria-label="魚のリストを読み込み中">
-      {[...Array(6)].map((_, index) => (
-        <Card key={index} className="flex flex-col">
-          <CardHeader>
-            <Skeleton className="h-6 w-3/4 mb-2" />
-            <Skeleton className="h-4 w-1/2" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-2/3" />
-          </CardContent>
-          <CardFooter className="mt-auto">
-            <Skeleton className="h-9 w-24" />
-          </CardFooter>
-        </Card>
-      ))}
-    </div>
-  )
-}
-
-function FilterSection({ waterTypeFilter, alphabetFilter, speciesFilter, setWaterTypeFilter, setAlphabetFilter, setSpeciesFilter, resetFilters }) {
+function FilterSection({ 
+  waterTypeFilter, 
+  alphabetFilter, 
+  speciesFilter, 
+  setWaterTypeFilter, 
+  setAlphabetFilter, 
+  setSpeciesFilter, 
+  resetFilters 
+}: FilterSectionProps) {
   return (
     <div className="mb-6">
       <div className="flex flex-wrap gap-4 mb-4">
@@ -120,7 +112,17 @@ function FilterSection({ waterTypeFilter, alphabetFilter, speciesFilter, setWate
 }
 
 export default function FishListClient({ initialFishList, showDeleteButton }: FishListClientProps) {
-  const { filteredFishList, waterTypeFilter, alphabetFilter, speciesFilter, setFishList, setWaterTypeFilter, setAlphabetFilter, setSpeciesFilter, resetFilters } = useFishStore()
+  const { 
+    filteredFishList, 
+    waterTypeFilter, 
+    alphabetFilter, 
+    speciesFilter, 
+    setFishList, 
+    setWaterTypeFilter, 
+    setAlphabetFilter, 
+    setSpeciesFilter, 
+    resetFilters 
+  } = useFishStore()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -171,7 +173,7 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
         resetFilters={resetFilters}
       />
 
-      {(!filteredFishList || filteredFishList.length === 0) ? (
+      {filteredFishList.length === 0 ? (
         <div className="text-center py-8" role="alert">
           <p className="text-lg font-semibold text-gray-600">魚が見つかりません。</p>
           <p className="text-sm text-gray-500 mt-2">検索条件を変更してみてください。</p>

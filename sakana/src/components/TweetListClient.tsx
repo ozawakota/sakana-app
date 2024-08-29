@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-// 型定義
 import { TweetModel } from '@/types/model'
 
 type TweetListClientProps = {
@@ -59,7 +58,7 @@ export default function TweetListClient({ initialTweetList }: TweetListClientPro
           <div className="flex items-start space-x-4">
             <Avatar className="h-12 w-12 rounded-full ring-2 ring-blue-500 dark:ring-blue-400">
               <AvatarImage src={tweet.user.image || '/default-avatar.png'} alt={tweet.nickname || tweet.user.name || '名無しさん'} />
-              <AvatarFallback>{(tweet.nickname || tweet.user.name || '名無しさん').slice(0, 2)}</AvatarFallback>
+              <AvatarFallback>{(tweet.nickname || tweet.user.name || '名無しさん').slice(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center space-x-2">

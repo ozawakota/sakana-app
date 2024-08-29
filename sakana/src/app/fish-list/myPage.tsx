@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import FishListClient from '@/components/FishListClient'
 import { Button } from "@/components/ui/button"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from '@/app/api/auth//auth'
 import Link from 'next/link'
 
 async function getFishList() {

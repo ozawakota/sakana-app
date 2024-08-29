@@ -1,25 +1,8 @@
+// store/useFishStore.ts
+
 import { create } from 'zustand'
-// 型定義
-import { FishModel } from '@/types/model'
-
-
-
-type WaterTypeFilter = 'ALL' | 'FRESHWATER' | 'SALTWATER' | 'BRACKISH'
-type AlphabetFilter = 'ALL' | 'ア' | 'カ' | 'サ' | 'タ' | 'ナ' | 'ハ' | 'マ' | 'ヤ' | 'ラ' | 'ワ'
-type SpeciesFilter = 'ALL' | string
-
-type FishStore = {
-  fishList: FishModel[]
-  filteredFishList: FishModel[]
-  waterTypeFilter: WaterTypeFilter
-  alphabetFilter: AlphabetFilter
-  speciesFilter: SpeciesFilter
-  setFishList: (fishList: FishModel[]) => void
-  setWaterTypeFilter: (filter: WaterTypeFilter) => void
-  setAlphabetFilter: (filter: AlphabetFilter) => void
-  setSpeciesFilter: (filter: SpeciesFilter) => void
-  applyFilters: () => void
-}
+import { FishStore, WaterType, AlphabetFilter } from '../types/store'
+import { FishModel } from '../types/model'
 
 export const useFishStore = create<FishStore>((set, get) => ({
   fishList: [],
@@ -27,21 +10,33 @@ export const useFishStore = create<FishStore>((set, get) => ({
   waterTypeFilter: 'ALL',
   alphabetFilter: 'ALL',
   speciesFilter: 'ALL',
-  setFishList: (fishList) => {
-    set({ fishList, filteredFishList: fishList })
-  },
-  setWaterTypeFilter: (filter) => {
+
+  setFishList: (fishList: FishModel[]) => set({ fishList, filteredFishList: fishList }),
+
+  setWaterTypeFilter: (filter: WaterType) => {
     set({ waterTypeFilter: filter })
     get().applyFilters()
   },
-  setAlphabetFilter: (filter) => {
+
+  setAlphabetFilter: (filter: AlphabetFilter) => {
     set({ alphabetFilter: filter })
     get().applyFilters()
   },
-  setSpeciesFilter: (filter) => {
+
+  setSpeciesFilter: (filter: string) => {
     set({ speciesFilter: filter })
     get().applyFilters()
   },
+
+  resetFilters: () => {
+    set({
+      waterTypeFilter: 'ALL',
+      alphabetFilter: 'ALL',
+      speciesFilter: 'ALL'
+    })
+    get().applyFilters()
+  },
+
   applyFilters: () => {
     const { fishList, waterTypeFilter, alphabetFilter, speciesFilter } = get()
     let filtered = fishList
@@ -51,16 +46,7 @@ export const useFishStore = create<FishStore>((set, get) => ({
     }
 
     if (alphabetFilter !== 'ALL') {
-      filtered = filtered.filter(fish => {
-        const firstChar = fish.name.charAt(0)
-        const alphabetRanges: { [key: string]: [string, string] } = {
-          'ア': ['ア', 'オ'], 'カ': ['カ', 'コ'], 'サ': ['サ', 'ソ'], 'タ': ['タ', 'ト'],
-          'ナ': ['ナ', 'ノ'], 'ハ': ['ハ', 'ホ'], 'マ': ['マ', 'モ'], 'ヤ': ['ヤ', 'ヨ'],
-          'ラ': ['ラ', 'ロ'], 'ワ': ['ワ', 'ン']
-        }
-        const [start, end] = alphabetRanges[alphabetFilter]
-        return firstChar >= start && firstChar <= end
-      })
+      filtered = filtered.filter(fish => fish.name.startsWith(alphabetFilter))
     }
 
     if (speciesFilter !== 'ALL') {
@@ -68,13 +54,5 @@ export const useFishStore = create<FishStore>((set, get) => ({
     }
 
     set({ filteredFishList: filtered })
-  },
-  resetFilters: () => {
-    set({
-      waterTypeFilter: 'ALL',
-      alphabetFilter: 'ALL',
-      speciesFilter: 'ALL'
-    })
-    get().applyFilters()
   }
 }))

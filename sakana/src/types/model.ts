@@ -9,14 +9,15 @@ export type FishModel = {
 }
 
 
-export type TweetModel = {
-  id: number
-  content: string
-  nickname: string | null
-  createdAt: Date
-  updatedAt: Date
-  userId: string
+export interface TweetModel {
+  id: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+  nickname: string | null;
   user: {
-    name: string | null
-  }
+    name: string | null;
+    image: string | null;
+  };
 }

@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button"
 import FishListClient from '@/components/FishListClient'
 import TweetListClient from '@/components/TweetListClient'
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from '@/app/api/auth/auth'
 import type { Metadata } from 'next'
+import { TweetModel } from '@/types/model'
 
 export const metadata: Metadata = {
   title: '魚図鑑 | 日本の魚類を探索しよう',
@@ -26,7 +27,7 @@ async function getFishList() {
   }
 }
 
-async function getTweetList() {
+async function getTweetList(): Promise<TweetModel[]> {
   try {
     const tweets = await prisma.tweet.findMany({
       orderBy: {
@@ -36,12 +37,22 @@ async function getTweetList() {
         user: {
           select: {
             name: true,
+            image: true,
           },
         },
       },
       take: 10, // Limit to the 10 most recent tweets
     })
-    return tweets
+
+    return tweets.map(tweet => ({
+      ...tweet,
+      createdAt: tweet.createdAt.toISOString(),
+      updatedAt: tweet.updatedAt.toISOString(),
+      user: {
+        name: tweet.user.name,
+        image: tweet.user.image,
+      },
+    }))
   } catch (error) {
     console.error('Failed to fetch tweet list:', error)
     throw new Error('Failed to fetch tweet list')

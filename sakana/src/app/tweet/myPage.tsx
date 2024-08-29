@@ -37,7 +37,7 @@ const formSchema = z.object({
       message: "50文字以内で入力してください。",
     })
     .optional()
-    .transform(val => val === "" ? null : val),
+    .transform(val => val === "" ? undefined : val),
 })
 
 export default function Tweet() {
@@ -145,7 +145,11 @@ export default function Tweet() {
                     ニックネーム
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="ニックネームを入力してください（省略可）" {...field} />
+                    <Input 
+                      placeholder="ニックネームを入力してください（省略可）" 
+                      {...field} 
+                      value={field.value ?? ''}
+                    />
                   </FormControl>
                   <FormDescription>
                     ニックネームは公開されます。空欄の場合は「名無しさん」として投稿されます。
