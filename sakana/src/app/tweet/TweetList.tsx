@@ -154,47 +154,51 @@ export default function TweetList() {
 
   return (
     <div className="space-y-4">
-      {tweets.map((tweet) => (
-        <Card key={tweet.id}>
-          <CardHeader>
-            <CardTitle>{tweet.nickname || '名無しさん'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>{tweet.content}</p>
-            <p className="text-sm text-gray-500 mt-2">
-              投稿日時: {new Date(tweet.createdAt).toLocaleString()}
-            </p>
-            {tweet.updatedAt !== tweet.createdAt && (
-              <p className="text-sm text-gray-500">
-                更新日時: {new Date(tweet.updatedAt).toLocaleString()}
+      {tweets.length === 0 ? (
+        <p>ツイートがありません。</p>
+      ) : (
+        tweets.map((tweet) => (
+          <Card key={tweet.id}>
+            <CardHeader>
+              <CardTitle>{tweet.nickname || '名無しさん'}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>{tweet.content}</p>
+              <p className="text-sm text-gray-500 mt-2">
+                投稿日時: {new Date(tweet.createdAt).toLocaleString()}
               </p>
-            )}
-          </CardContent>
-          <CardFooter>
-            {session && session.user && session.user.id === tweet.userId && (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEditClick(tweet)}
-                  className="mr-2"
-                >
-                  <Edit2 className="h-4 w-4 mr-2" />
-                  編集
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDeleteClick(tweet.id)}
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  削除
-                </Button>
-              </>
-            )}
-          </CardFooter>
-        </Card>
-      ))}
+              {tweet.updatedAt !== tweet.createdAt && (
+                <p className="text-sm text-gray-500">
+                  更新日時: {new Date(tweet.updatedAt).toLocaleString()}
+                </p>
+              )}
+            </CardContent>
+            <CardFooter>
+              {session && session.user && session.user.id === tweet.userId && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEditClick(tweet)}
+                    className="mr-2"
+                  >
+                    <Edit2 className="h-4 w-4 mr-2" />
+                    編集
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDeleteClick(tweet.id)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    削除
+                  </Button>
+                </>
+              )}
+            </CardFooter>
+          </Card>
+        ))
+      )}
 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>

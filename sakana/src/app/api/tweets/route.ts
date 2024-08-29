@@ -1,11 +1,22 @@
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "../auth/[...nextauth]/route"
 
 const prisma = new PrismaClient()
 
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions)
+
+    if (!session || !session.user) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+    }
+
     const tweets = await prisma.tweet.findMany({
+      where: {
+        userId: session.user.id
+      },
       orderBy: {
         createdAt: 'desc'
       },
@@ -25,7 +36,7 @@ export async function GET() {
       createdAt: tweet.createdAt,
       updatedAt: tweet.updatedAt,
       userId: tweet.userId,
-      nickname: tweet.nickname || tweet.user.nickname || null
+      nickname: tweet.nickname || null
     }))
 
     return NextResponse.json(formattedTweets)
