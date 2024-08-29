@@ -35,3 +35,7 @@ https://zenn.dev/web_life_ch/articles/c370ccbc85d3ba
 ```bash
 npx prisma studio # http://localhost:5555/
 ```
+
+## 公開方法
+
+vercel でフロントエンド
