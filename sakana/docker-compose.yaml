@@ -1,18 +1,20 @@
 version: '3.8'
 services:
   db:
-    image: postgres:14
-    container_name: fish_encyclopedia_postgres
+    image: mysql:8.0
+    container_name: fish_encyclopedia_mysql
     restart: always
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password
     networks:
       - app_network
 
@@ -31,7 +33,7 @@ services:
       - app_network
 
 volumes:
-  postgres_data:
+  mysql_data:
   mailhog_data:
 
 networks:

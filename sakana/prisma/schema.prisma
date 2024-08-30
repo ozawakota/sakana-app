@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Account {
@@ -13,17 +14,17 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@index([userId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Session {
@@ -33,7 +34,7 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  @@index([userId], map: "Session_userId_fkey")
 }
 
 model User {
@@ -59,19 +60,20 @@ model VerificationToken {
 model Fish {
   id          Int       @id @default(autoincrement())
   name        String    @unique
-  description String?
+  description String?   @db.Text
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  species     String
+  species     String    @db.VarChar(255)
   waterType   WaterType
 
   @@index([name])
   @@index([species])
 }
 
+
 model Tweet {
   id        Int      @id @default(autoincrement())
-  content   String
+  content   String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
