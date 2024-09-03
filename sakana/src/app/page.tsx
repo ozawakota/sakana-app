@@ -41,7 +41,7 @@ async function getTweetList(): Promise<TweetModel[]> {
           },
         },
       },
-      take: 10, // Limit to the 10 most recent tweets
+      take: 10,
     })
 
     return tweets.map(tweet => ({

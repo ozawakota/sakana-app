@@ -97,7 +97,7 @@ export default function Tweet() {
           description: "ツイートが投稿されました。",
         })
         form.reset({ nickname: data.nickname, content: "" })
-        
+
         // Set a timeout to trigger the TweetList reconstruction after 1 second
         setTimeout(() => {
           setTweetListKey(prevKey => prevKey + 1)
