@@ -11,7 +11,7 @@ export default function About() {
             <dt className="text-xl font-bold pb-4">実装環境(ツール)</dt>
             <dd>
               <ul>
-                <li>next.js 14.2.5 </li>
+                <li>next.js 14.2.5 (状態管理: zustand)</li>
                 <li>@prisma/client 5.18.0 </li>
                 <li>mysql 8.0</li>
                 <li>TablePlus 6.1.2</li>
