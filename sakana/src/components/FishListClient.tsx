@@ -6,7 +6,7 @@ import { getWaterTypeJapanese } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useFishStore } from '@/store/useFishStore'
-import { ChevronRight, Trash2 } from 'lucide-react'
+import { ChevronRight, Trash2, AlertTriangle } from 'lucide-react'
 import { toast } from "@/components/ui/use-toast"
 import {
   AlertDialog,
@@ -23,13 +23,14 @@ import {
 import { FishModel } from '@/types/model'
 import { LoadingSkeleton } from './LoadingSkeleton'
 import { FilterSection } from './FilterSection'
+import { ErrorBoundary } from './ErrorBoundary'
 
 type FishListClientProps = {
   initialFishList: FishModel[]
   showDeleteButton: boolean
 }
 
-export default function FishListClient({ initialFishList, showDeleteButton }: FishListClientProps) {
+function FishListContent({ initialFishList, showDeleteButton }: FishListClientProps) {
   const { 
     filteredFishList, 
     waterTypeFilter, 
@@ -42,11 +43,14 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
     resetFilters 
   } = useFishStore()
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (initialFishList && initialFishList.length > 0) {
       setFishList(initialFishList)
       setIsLoading(false)
+    } else {
+      setError('魚のリストの取得に失敗しました。')
     }
   }, [initialFishList, setFishList])
 
@@ -57,7 +61,8 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
       })
 
       if (!response.ok) {
-        throw new Error('削除に失敗しました。')
+        const errorData = await response.json()
+        throw new Error(errorData.message || '削除に失敗しました。')
       }
 
       setFishList(filteredFishList.filter(fish => fish.id !== id))
@@ -69,7 +74,7 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
       console.error('Error deleting fish:', error)
       toast({
         title: "削除失敗",
-        description: "魚の削除中にエラーが発生しました。もう一度お試しください。",
+        description: error instanceof Error ? error.message : "魚の削除中にエラーが発生しました。もう一度お試しください。",
         variant: "destructive",
       })
     }
@@ -77,6 +82,18 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
 
   if (isLoading) {
     return <LoadingSkeleton />
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8" role="alert">
+        <AlertTriangle className="mx-auto h-12 w-12 text-yellow-500" />
+        <p className="mt-2 text-lg font-semibold text-gray-600">{error}</p>
+        <Button onClick={() => window.location.reload()} className="mt-4">
+          再読み込み
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -143,5 +160,25 @@ export default function FishListClient({ initialFishList, showDeleteButton }: Fi
         </div>
       )}
     </>
+  )
+}
+
+export default function FishListClient(props: FishListClientProps) {
+  return (
+    <ErrorBoundary fallback={<ErrorFallback />}>
+      <FishListContent {...props} />
+    </ErrorBoundary>
+  )
+}
+
+function ErrorFallback() {
+  return (
+    <div className="text-center py-8" role="alert">
+      <AlertTriangle className="mx-auto h-12 w-12 text-red-500" />
+      <p className="mt-2 text-lg font-semibold text-gray-600">予期せぬエラーが発生しました。</p>
+      <Button onClick={() => window.location.reload()} className="mt-4">
+        ページを再読み込み
+      </Button>
+    </div>
   )
 }
