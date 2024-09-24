@@ -90,7 +90,6 @@ export default async function Home() {
       <h2 className="text-3xl font-bold mb-6 text-white mt-16">投稿一覧</h2>
       <TweetListClient initialTweetList={tweetList} />
       <h2 className="text-3xl font-bold mb-6 text-white mt-16">魚一覧(無限スクロールバージョン)</h2>
-      <FishSquares />
       <div className="mt-16">
         <FishListPaginated initialFishList={fishList} />
       </div>
