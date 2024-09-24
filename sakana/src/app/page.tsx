@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { Button } from "@/components/ui/button"
 import FishListClient from '@/components/FishListClient'
 import TweetListClient from '@/components/TweetListClient'
+import FishSquares from '@/components/FishSquares'
+import FishListPaginated from '@/components/FishListPaginated'
 import { getServerSession } from "next-auth/next"
 import { authOptions } from '@/app/api/auth/auth'
 import type { Metadata } from 'next'
@@ -59,6 +61,8 @@ async function getTweetList(): Promise<TweetModel[]> {
   }
 }
 
+// 無限スクロールバージョンの処理 ３件ずつ
+
 export default async function Home() {
   const fishList = await getFishList()
   const tweetList = await getTweetList()
@@ -85,6 +89,11 @@ export default async function Home() {
       <FishListClient initialFishList={fishList} showDeleteButton={false} />
       <h2 className="text-3xl font-bold mb-6 text-white mt-16">投稿一覧</h2>
       <TweetListClient initialTweetList={tweetList} />
+      <h2 className="text-3xl font-bold mb-6 text-white mt-16">魚一覧(無限スクロールバージョン)</h2>
+      <FishSquares />
+      <div className="mt-16">
+        <FishListPaginated initialFishList={fishList} />
+      </div>
     </div>
   )
 }
