@@ -10,10 +10,20 @@ import { FishModel } from '@/types/model'
 import { LoadingSkeleton } from './LoadingSkeleton'
 import { ErrorBoundary } from './ErrorBoundary'
 
+/**
+ * FishListPaginatedProps型の定義
+ * @typedef {Object} FishListPaginatedProps
+ * @property {FishModel[]} initialFishList - 初期の魚のリスト
+ */
 type FishListPaginatedProps = {
   initialFishList: FishModel[]
 }
 
+/**
+ * 魚のリストを表示し、ページネーション機能を提供するコンポーネント
+ * @param {FishListPaginatedProps} props - コンポーネントのプロパティ
+ * @returns {JSX.Element} 魚のリストとページネーションUIを含むJSX要素
+ */
 function FishListContent({ initialFishList }: FishListPaginatedProps) {
   const [fishList, setFishList] = useState<FishModel[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -36,6 +46,9 @@ function FishListContent({ initialFishList }: FishListPaginatedProps) {
   const currentFishes = fishList.slice(indexOfFirstFish, indexOfLastFish)
   const totalPages = Math.ceil(fishList.length / itemsPerPage)
 
+  /**
+   * 次のページに移動する関数
+   */
   const nextPage = () => {
     setIsPaginationLoading(true)
     setTimeout(() => {
@@ -44,6 +57,9 @@ function FishListContent({ initialFishList }: FishListPaginatedProps) {
     }, 500)
   }
 
+  /**
+   * 前のページに移動する関数
+   */
   const prevPage = () => {
     setIsPaginationLoading(true)
     setTimeout(() => {
@@ -133,6 +149,11 @@ function FishListContent({ initialFishList }: FishListPaginatedProps) {
   )
 }
 
+/**
+ * エラーバウンダリーでラップされた魚のリストページネーションコンポーネント
+ * @param {FishListPaginatedProps} props - コンポーネントのプロパティ
+ * @returns {JSX.Element} エラーバウンダリーでラップされたFishListContentコンポーネント
+ */
 export default function FishListPaginated(props: FishListPaginatedProps) {
   return (
     <ErrorBoundary fallback={<ErrorFallback />}>
@@ -141,6 +162,10 @@ export default function FishListPaginated(props: FishListPaginatedProps) {
   )
 }
 
+/**
+ * エラー発生時に表示されるフォールバックコンポーネント
+ * @returns {JSX.Element} エラーメッセージとリロードボタンを含むJSX要素
+ */
 function ErrorFallback() {
   return (
     <div className="text-center py-8" role="alert">
