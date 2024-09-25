@@ -1,47 +1,42 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { Badge } from "@/components/ui/badge"
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function About() {
-  const scrollRefs = {
-    implementation: useRef<HTMLDivElement>(null),
-    features: useRef<HTMLDivElement>(null),
-    tracker: useRef<HTMLDivElement>(null),
-  }
 
-  const [scrollAmounts, setScrollAmounts] = useState({
-    implementation: 0,
-    features: 0,
-    tracker: 0,
-  })
+  const [activeTab, setActiveTab] = useState(0);
+  const scrollPositions = useRef([0, 0, 0]);
+  const contentRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = (key: keyof typeof scrollAmounts) => {
-      if (scrollRefs[key].current) {
-        setScrollAmounts(prev => ({
-          ...prev,
-          [key]: scrollRefs[key].current!.scrollTop
-        }))
+    const handleScroll = () => {
+      if (contentRef.current) {
+        scrollPositions.current[activeTab] = contentRef.current.scrollTop;
       }
-    }
+    };
 
-    Object.keys(scrollRefs).forEach((key) => {
-      const scrollElement = scrollRefs[key as keyof typeof scrollRefs].current
-      if (scrollElement) {
-        scrollElement.addEventListener('scroll', () => handleScroll(key as keyof typeof scrollAmounts))
-      }
-    })
+    const content = contentRef.current;
+    if (content) {
+      content.addEventListener('scroll', handleScroll);
+      content.scrollTop = scrollPositions.current[activeTab];
+    }
 
     return () => {
-      Object.keys(scrollRefs).forEach((key) => {
-        const scrollElement = scrollRefs[key as keyof typeof scrollRefs].current
-        if (scrollElement) {
-          scrollElement.removeEventListener('scroll', () => handleScroll(key as keyof typeof scrollAmounts))
-        }
-      })
-    }
-  }, [])
+      if (content) {
+        content.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [activeTab]);
+
+  const handleTabClick = (index) => {
+    setActiveTab(index);
+  };
+
+  const tabContents = [
+    "Content for Tab 1. ".repeat(100),
+    "Content for Tab 2. ".repeat(100),
+    "Content for Tab 3. ".repeat(100),
+  ];
 
   return (
     <section className="p-4  text-white">
@@ -50,11 +45,7 @@ export default function About() {
         
         <div className="mb-16">
           <h2 className="text-xl font-bold pb-4">実装環境(ツール)</h2>
-          <Badge variant="outline" className="mb-2 bg-white">
-            スクロール量: {scrollAmounts.implementation}px
-          </Badge>
           <div 
-            ref={scrollRefs.implementation}
             className="h-[200px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto"
           >
             <ul className="list-disc pl-5 space-y-2">
@@ -64,20 +55,13 @@ export default function About() {
               <li>TablePlus 6.1.2</li>
               <li>Docker 3.0</li>
               <li>Docker:Mailhog</li>
-              {Array.from({ length: 10 }).map((_, index) => (
-                <li key={index}>追加の実装環境項目 {index + 1}</li>
-              ))}
             </ul>
           </div>
         </div>
 
         <div className="mb-16">
           <h2 className="text-xl font-bold pb-4">今後の予定追加機能(2024/8/28 現在)</h2>
-          <Badge variant="outline" className="mb-2 bg-white">
-            スクロール量: {scrollAmounts.features}px
-          </Badge>
           <div 
-            ref={scrollRefs.features}
             className="h-[200px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto"
           >
             <ul className="list-disc pl-5 space-y-2">
@@ -89,31 +73,35 @@ export default function About() {
               <li>お魚ニュース</li>
               <li>お魚のレシピ動画</li>
               <li>魚の動画</li>
-              {Array.from({ length: 10 }).map((_, index) => (
-                <li key={index}>追加の予定機能 {index + 1}</li>
-              ))}
             </ul>
           </div>
         </div>
 
-        <div className="mb-16">
-          <h2 className="text-xl font-bold mb-4">スクロール量トラッカー</h2>
-          <Badge variant="outline" className="mb-2 bg-white">
-            スクロール量: {scrollAmounts.tracker}px
-          </Badge>
-          <div 
-            ref={scrollRefs.tracker}
-            className="h-[300px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto"
-          >
-            <div className="space-y-4">
-              {Array.from({ length: 50 }).map((_, index) => (
-                <p key={index}>
-                  これは段落 {index + 1} です。スクロールしてスクロール量の変化を確認してください。
-                </p>
-              ))}
-            </div>
-          </div>
+        <div className="w-full max-w-2xl mx-auto p-4">
+        <div className="flex border-b">
+          {['Tab 1', 'Tab 2', 'Tab 3'].map((tab, index) => (
+            <button
+              key={index}
+              className={`px-4 py-2 ${
+                activeTab === index
+                  ? 'border-b-2 border-blue-500 text-blue-500'
+                  : 'text-gray-500'
+              }`}
+              onClick={() => handleTabClick(index)}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
+        <div 
+          ref={contentRef}
+          className="mt-4 h-64 overflow-y-auto"
+        >
+          {tabContents[activeTab]}
+        </div>
+      </div>
+
+        
       </div>
     </section>
   )
