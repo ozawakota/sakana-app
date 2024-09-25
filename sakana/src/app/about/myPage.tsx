@@ -50,7 +50,7 @@ export default function About() {
         
         <div className="mb-16">
           <h2 className="text-xl font-bold pb-4">実装環境(ツール)</h2>
-          <Badge variant="outline" className="mb-2">
+          <Badge variant="outline" className="mb-2 bg-white">
             スクロール量: {scrollAmounts.implementation}px
           </Badge>
           <div 
@@ -73,7 +73,7 @@ export default function About() {
 
         <div className="mb-16">
           <h2 className="text-xl font-bold pb-4">今後の予定追加機能(2024/8/28 現在)</h2>
-          <Badge variant="outline" className="mb-2">
+          <Badge variant="outline" className="mb-2 bg-white">
             スクロール量: {scrollAmounts.features}px
           </Badge>
           <div 
@@ -98,7 +98,7 @@ export default function About() {
 
         <div className="mb-16">
           <h2 className="text-xl font-bold mb-4">スクロール量トラッカー</h2>
-          <Badge variant="outline" className="mb-2">
+          <Badge variant="outline" className="mb-2 bg-white">
             スクロール量: {scrollAmounts.tracker}px
           </Badge>
           <div 
