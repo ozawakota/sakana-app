@@ -33,9 +33,10 @@ export default function About() {
   };
 
   const tabContents = [
-    "Content for Tab 1. ".repeat(100),
-    "Content for Tab 2. ".repeat(100),
-    "Content for Tab 3. ".repeat(100),
+    "<p>タブ:Tab 1.</p> ".repeat(100),
+    "タブ:Tab 2. ".repeat(200),
+    "タブ:Tab 3. ".repeat(300),
+    "タブ:Tab 4. ".repeat(300),
   ];
 
   return (
@@ -79,10 +80,10 @@ export default function About() {
 
         <div className="w-full max-w-2xl mx-auto p-4">
         <div className="flex border-b">
-          {['Tab 1', 'Tab 2', 'Tab 3'].map((tab, index) => (
+          {['Tab 1', 'Tab 2', 'Tab 3', 'Tab 4'].map((tab, index) => (
             <button
               key={index}
-              className={`px-4 py-2 ${
+              className={`px-4 py-2 bg-white ${
                 activeTab === index
                   ? 'border-b-2 border-blue-500 text-blue-500'
                   : 'text-gray-500'
