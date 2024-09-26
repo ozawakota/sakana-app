@@ -4,37 +4,50 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function About() {
   const [activeTab, setActiveTab] = useState(0);
-  const [isContentsOpen, setIsContentsOpen] = useState(true); // State for collapse
-  const scrollPositions = useRef([0, 0, 0, 0]);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const [openTabs, setOpenTabs] = useState<boolean[]>(Array(30).fill(false));
+  const scrollPositions = useRef<number[]>(Array(30).fill(0));
+  const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tabsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (contentRef.current) {
-        scrollPositions.current[activeTab] = contentRef.current.scrollTop;
+    contentRefs.current = contentRefs.current.slice(0, 30);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = (index: number) => {
+      if (contentRefs.current[index]) {
+        scrollPositions.current[index] = contentRefs.current[index]!.scrollTop;
       }
     };
 
-    const content = contentRef.current;
-    if (content) {
-      content.addEventListener('scroll', handleScroll);
-      content.scrollTop = scrollPositions.current[activeTab];
-    }
+    openTabs.forEach((isOpen, index) => {
+      const content = contentRefs.current[index];
+      if (content && isOpen) {
+        content.addEventListener('scroll', () => handleScroll(index));
+        content.scrollTop = scrollPositions.current[index];
+      }
+    });
 
     return () => {
-      if (content) {
-        content.removeEventListener('scroll', handleScroll);
-      }
+      openTabs.forEach((isOpen, index) => {
+        const content = contentRefs.current[index];
+        if (content && isOpen) {
+          content.removeEventListener('scroll', () => handleScroll(index));
+        }
+      });
     };
-  }, [activeTab]);
+  }, [openTabs]);
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
 
-  const toggleContents = () => {
-    setIsContentsOpen(!isContentsOpen);
+  const toggleTab = (index: number) => {
+    setOpenTabs(prev => {
+      const newOpenTabs = [...prev];
+      newOpenTabs[index] = !newOpenTabs[index];
+      return newOpenTabs;
+    });
   };
 
   const tabContents = [
@@ -158,20 +171,24 @@ export default function About() {
             ))}
           </div>
           <div className='relative h-[400px]'>
-            <button 
-              className="mt-4 bg-gray-800 text-white px-4 py-2 rounded"
-              onClick={toggleContents}
-            >
-              {isContentsOpen ? '閉じる' : '開く'} 解答画面
-            </button>
-            <div className={`w-[400px] h-[400px] bg-blue-200 text-black p-2 absolute t-contents ${isContentsOpen ? 'show' : ''}`}>
-              <div
-                ref={contentRef}
-                className="mt-2 h-[360px] overflow-y-auto"
-              >
-                {tabContents[activeTab]}
+            {Array.from({ length: 30 }, (_, i) => (
+              <div key={i} className={activeTab === i ? '' : 'hidden'}>
+                <button
+                  className="mt-4 bg-gray-800 text-white px-4 py-2 rounded"
+                  onClick={() => toggleTab(i)}
+                >
+                  {openTabs[i] ? '閉じる' : '開く'} 解答画面
+                </button>
+                <div className={`w-[400px] h-[400px] bg-blue-200 text-black p-2 absolute t-contents ${openTabs[i] ? 'show' : ''}`}>
+                  <div
+                    ref={el => contentRefs.current[i] = el}
+                    className="mt-2 h-[360px] overflow-y-auto"
+                  >
+                    {tabContents[i]}
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
             <div>
               <img src="https://placehold.jp/860x400.png" alt="logo" />
             </div>
