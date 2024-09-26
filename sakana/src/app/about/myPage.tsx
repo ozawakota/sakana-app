@@ -85,7 +85,7 @@ export default function About() {
           <p>「以下の問いに答えよ」「以下の問いに答え」</p>
           {/* <p>{fixPunctuation("")}</p> */}
           <p><span className='inline-block'>句読点が文頭に来る場合は、前の文章</span><span className='inline-block'>入力値、</span></p>
-          <p>句読点が文頭に来る場合は、前の文章最後。。。</p>
+          <p>句読点が文頭に来る場合は、前の文章最後。。</p>
           <p>句読点が文頭に来る場合は、前の文章最後、、</p>
           <p>句読点が文頭に来る場合は、前の文章最後></p>
           <p>句読点が文頭に来る場合は、前の文章最後」」</p>
