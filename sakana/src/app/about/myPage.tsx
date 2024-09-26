@@ -5,7 +5,8 @@ import React, { useState, useEffect, useRef } from 'react';
 export default function About() {
   const [activeTab, setActiveTab] = useState(0);
   const scrollPositions = useRef([0, 0, 0, 0]);
-  const contentRef = useRef(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +28,7 @@ export default function About() {
     };
   }, [activeTab]);
 
-  const handleTabClick = (index) => {
+  const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
 
@@ -36,44 +37,61 @@ export default function About() {
       <React.Fragment key={i}>
         <div className='[writing-mode:vertical-rl] m-4'>
           <p className=''>縦書き:Tab 1.</p>
-          <p className="underline decoration-soli">下線</p>
+          <p className="underline decoration-solid">下線</p>
           <p className='underline decoration-wavy'>波線</p>
           <p className='underline decoration-double'>二重線</p>
           <p className='underline decoration-dashed decoration-orange-700'>破線</p>
           <p className='text-4xl text-red-500'>フォント変更</p>
-          <p>この３つの要素が正しく揃っていれば、植物の成長が円滑に進むことができます。</p>
-        </div>
-    </React.Fragment>
+          <p className='text-3xl'>
+          この
+          <ruby>
+            <rb>３</rb>
+            <rt>みっ</rt>
+          </ruby>
+          つ
+          の
+          <ruby>
+            <rb>要素</rb>
+            <rt>ようそ</rt>
+          </ruby>
+          が
+          <ruby>
+            <rb>正</rb>
+            <rt>ただ</rt>
+          </ruby>
+          しく
+          <ruby>
+            <rb>揃</rb>
+            <rt>そろ</rt>
+          </ruby>
+          っていれば、<br/>
+          <ruby>
+            <rb>植物</rb>
+            <rt>しょくぶつ</rt>
+          </ruby>
+          の
+          <ruby>
+            <rb>成長</rb>
+            <rt>せいちょう</rt>
+          </ruby>
+          が
+          <ruby>
+            <rb>円滑</rb>
+            <rt>えんかつ</rt>
+          </ruby>
+          に
+          <ruby>
+            <rb>進</rb>
+            <rt>すす</rt>
+          </ruby>
+          むことができます。
+            </p>
+          </div>
+      </React.Fragment>
     )),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 2.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 3.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 4.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 5.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 6.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 7.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 8.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 9.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 10</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 11.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 12.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 13.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 14.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 15.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 16.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 17.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 18.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 19.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 20.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 21.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 22.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 23.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 24.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 25.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 26.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 27.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 28.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 29.</p>),
-    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 30.</p>),
+    ...Array(29).fill(null).map((_, i) => 
+      Array(50).fill(null).map((_, j) => <p key={j}>タブ:Tab {i + 2}.</p>)
+    )
   ];
 
   return (
@@ -116,11 +134,14 @@ export default function About() {
         </div>
 
         <div className="w-full mx-auto p-4">
-          <div className="flex flex-wrap border-b">
+          <div 
+            ref={tabsRef}
+            className="flex overflow-x-auto whitespace-nowrap border-b scrollbar-hide"
+          >
             {Array.from({ length: 30 }, (_, i) => (
               <button
                 key={i}
-                className={`px-4 py-2 bg-white ${
+                className={`flex-shrink-0 px-4 py-2 bg-white ${
                   activeTab === i
                     ? 'border-b-2 border-blue-500 text-blue-500'
                     : 'text-gray-500'
@@ -133,7 +154,7 @@ export default function About() {
           </div>
           <div 
             ref={contentRef}
-            className="mt-4 h-64 overflow-y-auto"
+            className="mt-4 h-[800px] overflow-y-auto"
           >
             {tabContents[activeTab]}
           </div>

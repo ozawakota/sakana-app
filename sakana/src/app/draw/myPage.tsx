@@ -89,7 +89,7 @@ export default function DrawingApp() {
     if (!mainCanvas || !mainCtx || !previewCanvas || !previewCtx) return
 
     clearCanvas(mainCtx, mainCanvas.width, mainCanvas.height)
-    clearCanvas(previewCtx, previewCanvas.width, previewCanvas.height)
+    clearCanvas(previewCtx, previewCanvas.width * 2, previewCanvas.height * 2)
     ws?.send(JSON.stringify({ type: 'reset' }))
   }
 
