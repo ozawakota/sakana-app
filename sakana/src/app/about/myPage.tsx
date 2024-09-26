@@ -40,6 +40,7 @@ export default function About() {
           <p className='underline decoration-wavy'>波線</p>
           <p className='underline decoration-double'>二重線</p>
           <p className='underline decoration-dashed'>破線</p>
+          <p className='text-4xl text-red-500'>フォント変更</p>
         </div>
     </React.Fragment>
     )),
