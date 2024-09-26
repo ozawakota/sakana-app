@@ -95,6 +95,11 @@ background-size: 400% 400%;
 animation: bggradient 15s ease infinite;
 }
 
+@layer utilities {
+  .palt {
+    font-feature-settings: "palt";
+  }
+}
 
 @layer base {
   .c-container {
@@ -117,3 +122,4 @@ body {
   opacity: 1; /* Full opacity when shown */
   transform: translateX(0); /* Return to original position */
 }
+

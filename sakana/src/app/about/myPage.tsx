@@ -50,10 +50,67 @@ export default function About() {
     });
   };
 
+  const fixPunctuation = (text: string) => {
+    // 行頭禁則文字
+    const startForbidden = /^[、。！？」』）］｝〕〉》"'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮ]/;
+    
+    // 行末禁則文字
+    const endForbidden = /[「『（［｛〔〈《"']/;
+  
+    // テキストを文字配列に分割
+    const chars = text.split('');
+  
+    // 禁則処理を適用
+    for (let i = 0; i < chars.length - 1; i++) {
+      if (startForbidden.test(chars[i + 1])) {
+        // 次の文字が行頭禁則文字の場合、現在の文字にくっつける
+        chars[i] += chars[i + 1];
+        chars.splice(i + 1, 1);
+      } else if (endForbidden.test(chars[i])) {
+        // 現在の文字が行末禁則文字の場合、次の文字とくっつける
+        chars[i] += chars[i + 1];
+        chars.splice(i + 1, 1);
+      }
+    }
+  
+    return chars.join('');
+  };
+
   const tabContents = [
     Array(5).fill(null).map((_, i) => (
       <React.Fragment key={i}>
-        <div className='[writing-mode:vertical-rl] m-4'>
+        <div className='[writing-mode:vertical-rl] m-4 space-x-3'>
+          <h1 className='text-4xl font-bold m-2'>禁則処理</h1>
+          <h2>禁則１：行頭禁則文字</h2>
+          <p>「以下の問いに答えよ」「以下の問いに答え」</p>
+          {/* <p>{fixPunctuation("")}</p> */}
+          <p>句読点が文頭に来る場合は、前の文章<br/>入力値、</p>
+          <p>句読点が文頭に来る場合は、前の文章最後。。。</p>
+          <p>句読点が文頭に来る場合は、前の文章最後、、</p>
+          <p>句読点が文頭に来る場合は、前の文章最後></p>
+          <p>句読点が文頭に来る場合は、前の文章最後」」</p>
+          <p>句読点が文頭に来る場合は、前の文章最後】】</p>
+          <p>句読点が文頭に来る場合は、前の文章最後＞</p>
+          <p>句読点が文頭に来る場合は、前の文章最後ぁぁ</p>
+          <p>句読点が文頭に来る場合は、前の文章最後ー</p>
+          <p>句読点が文頭に来る場合は、前の文章最後・</p>
+          <p>句読点が文頭に来る場合は、前の文章最後―</p>
+          <p>句読点が文頭に来る場合は、前の文章最後-</p>
+          <p>句読点が文頭に来る場合は、前の文章最後、</p>
+          <p>句読点が文頭に来る場合は、前の文章最後:</p>
+          <p>句読点が文頭に来る場合は、前の文章最後？</p>
+          <p>句読点が文頭に来る場合は、前の文章最後／</p>
+          <p>句読点が文頭に来る場合は、前の文章最後々</p>
+          <p>句読点が文頭に来る場合は、前の文章最後ゝ</p>
+          <h2>禁則２：行末禁則文字</h2>
+          <p>「句読点が文頭に来る場合は、前の文章最後」</p>
+          <p>＜句読点が文頭に来る場合は、前の文章最後＞</p>
+          <p>【句読点が文頭に来る場合は、前の文章最後】</p>
+          <p>test</p>
+          <p>「が文末に来る場合は、次の文章の頭に表「表示する。</p>
+          <p>」が文頭に来る場合は、前の文章の最後尾に」表示する。</p>
+          <p>小文字が文頭に来る場合は、前の文章のししょ尾に表示するしょうがっこうしょうがっっっ</p>
+          <p>{<img src="https://placehold.jp/60x60.png" />}</p>
           <p className=''>縦書き:Tab 1.</p>
           <p className="underline decoration-solid">下線</p>
           <p className='underline decoration-wavy'>波線</p>
@@ -179,7 +236,7 @@ export default function About() {
                 >
                   {openTabs[i] ? '閉じる' : '開く'} 解答画面
                 </button>
-                <div className={`w-[400px] h-[400px] bg-white text-black p-2 absolute t-contents ${openTabs[i] ? 'show' : ''}`}>
+                <div className={`w-[600px] h-[400px] bg-white text-black p-2 absolute t-contents ${openTabs[i] ? 'show' : ''}`}>
                   <div
                     ref={el => contentRefs.current[i] = el}
                     className="mt-2 h-[360px] overflow-y-auto"
