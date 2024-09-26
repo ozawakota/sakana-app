@@ -164,10 +164,10 @@ export default function About() {
             >
               {isContentsOpen ? '閉じる' : '開く'} 解答画面
             </button>
-            <div className={`w-[400px] bg-white text-black p-2 absolute t-contents ${isContentsOpen ? 'show' : ''}`}>
+            <div className={`w-[400px] h-[400px] bg-blue-200 text-black p-2 absolute t-contents ${isContentsOpen ? 'show' : ''}`}>
               <div
                 ref={contentRef}
-                className="mt-4 h-[400px] overflow-y-auto"
+                className="mt-2 h-[360px] overflow-y-auto"
               >
                 {tabContents[activeTab]}
               </div>
