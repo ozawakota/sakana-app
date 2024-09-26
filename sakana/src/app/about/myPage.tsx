@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function About() {
   const [activeTab, setActiveTab] = useState(0);
+  const [isContentsOpen, setIsContentsOpen] = useState(true); // State for collapse
   const scrollPositions = useRef([0, 0, 0, 0]);
   const contentRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -32,6 +33,10 @@ export default function About() {
     setActiveTab(index);
   };
 
+  const toggleContents = () => {
+    setIsContentsOpen(!isContentsOpen);
+  };
+
   const tabContents = [
     Array(5).fill(null).map((_, i) => (
       <React.Fragment key={i}>
@@ -43,50 +48,50 @@ export default function About() {
           <p className='underline decoration-dashed decoration-orange-700'>破線</p>
           <p className='text-4xl text-red-500'>フォント変更</p>
           <p className='text-3xl'>
-          この
-          <ruby>
-            <rb>３</rb>
-            <rt>みっ</rt>
-          </ruby>
-          つ
-          の
-          <ruby>
-            <rb>要素</rb>
-            <rt>ようそ</rt>
-          </ruby>
-          が
-          <ruby>
-            <rb>正</rb>
-            <rt>ただ</rt>
-          </ruby>
-          しく
-          <ruby>
-            <rb>揃</rb>
-            <rt>そろ</rt>
-          </ruby>
-          っていれば、<br/>
-          <ruby>
-            <rb>植物</rb>
-            <rt>しょくぶつ</rt>
-          </ruby>
-          の
-          <ruby>
-            <rb>成長</rb>
-            <rt>せいちょう</rt>
-          </ruby>
-          が
-          <ruby>
-            <rb>円滑</rb>
-            <rt>えんかつ</rt>
-          </ruby>
-          に
-          <ruby>
-            <rb>進</rb>
-            <rt>すす</rt>
-          </ruby>
-          むことができます。
-            </p>
-          </div>
+            この
+            <ruby>
+              <rb>３</rb>
+              <rt>みっ</rt>
+            </ruby>
+            つ
+            の
+            <ruby>
+              <rb>要素</rb>
+              <rt>ようそ</rt>
+            </ruby>
+            が
+            <ruby>
+              <rb>正</rb>
+              <rt>ただ</rt>
+            </ruby>
+            しく
+            <ruby>
+              <rb>揃</rb>
+              <rt>そろ</rt>
+            </ruby>
+            っていれば、<br/>
+            <ruby>
+              <rb>植物</rb>
+              <rt>しょくぶつ</rt>
+            </ruby>
+            の
+            <ruby>
+              <rb>成長</rb>
+              <rt>せいちょう</rt>
+            </ruby>
+            が
+            <ruby>
+              <rb>円滑</rb>
+              <rt>えんかつ</rt>
+            </ruby>
+            に
+            <ruby>
+              <rb>進</rb>
+              <rt>すす</rt>
+            </ruby>
+            むことができます。
+          </p>
+        </div>
       </React.Fragment>
     )),
     ...Array(29).fill(null).map((_, i) => 
@@ -152,11 +157,24 @@ export default function About() {
               </button>
             ))}
           </div>
-          <div 
-            ref={contentRef}
-            className="mt-4 h-[800px] overflow-y-auto"
-          >
-            {tabContents[activeTab]}
+          <div className='relative h-[400px]'>
+            <button 
+              className="mt-4 bg-gray-800 text-white px-4 py-2 rounded"
+              onClick={toggleContents}
+            >
+              {isContentsOpen ? '閉じる' : '開く'} 解答画面
+            </button>
+            <div className={`w-[400px] bg-white text-black p-2 absolute t-contents ${isContentsOpen ? 'show' : ''}`}>
+              <div
+                ref={contentRef}
+                className="mt-4 h-[400px] overflow-y-auto"
+              >
+                {tabContents[activeTab]}
+              </div>
+            </div>
+            <div>
+              <img src="https://placehold.jp/860x400.png" alt="logo" />
+            </div>
           </div>
         </div>
       </div>
