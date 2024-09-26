@@ -39,14 +39,41 @@ export default function About() {
           <p className="underline decoration-soli">下線</p>
           <p className='underline decoration-wavy'>波線</p>
           <p className='underline decoration-double'>二重線</p>
-          <p className='underline decoration-dashed'>破線</p>
+          <p className='underline decoration-dashed decoration-orange-700'>破線</p>
           <p className='text-4xl text-red-500'>フォント変更</p>
+          <p>この３つの要素が正しく揃っていれば、植物の成長が円滑に進むことができます。</p>
         </div>
     </React.Fragment>
     )),
     Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 2.</p>),
     Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 3.</p>),
     Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 4.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 5.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 6.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 7.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 8.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 9.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 10</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 11.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 12.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 13.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 14.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 15.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 16.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 17.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 18.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 19.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 20.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 21.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 22.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 23.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 24.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 25.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 26.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 27.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 28.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 29.</p>),
+    Array(50).fill(null).map((_, i) => <p key={i}>タブ:Tab 30.</p>),
   ];
 
   return (
@@ -88,19 +115,19 @@ export default function About() {
           </div>
         </div>
 
-        <div className="w-full max-w-2xl mx-auto p-4">
-          <div className="flex border-b">
-            {['Tab 1', 'Tab 2', 'Tab 3', 'Tab 4'].map((tab, index) => (
+        <div className="w-full mx-auto p-4">
+          <div className="flex flex-wrap border-b">
+            {Array.from({ length: 30 }, (_, i) => (
               <button
-                key={index}
+                key={i}
                 className={`px-4 py-2 bg-white ${
-                  activeTab === index
+                  activeTab === i
                     ? 'border-b-2 border-blue-500 text-blue-500'
                     : 'text-gray-500'
                 }`}
-                onClick={() => handleTabClick(index)}
+                onClick={() => handleTabClick(i)}
               >
-                {tab}
+                Tab {i + 1}
               </button>
             ))}
           </div>
