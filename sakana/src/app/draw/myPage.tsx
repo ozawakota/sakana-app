@@ -97,7 +97,7 @@ export default function DrawingApp() {
     <div className="flex flex-col items-center space-y-4">
       <div className="flex space-x-4">
         <div className="flex flex-col items-center">
-          <h2 className="text-lg font-semibold mb-2">Main Canvas</h2>
+          <h2 className="text-lg font-semibold mb-2">入力画面</h2>
           <canvas 
             ref={mainCanvasRef} 
             width={500} 
@@ -106,7 +106,7 @@ export default function DrawingApp() {
           />
         </div>
         <div className="flex flex-col items-center">
-          <h2 className="text-lg font-semibold mb-2">Preview</h2>
+          <h2 className="text-lg font-semibold mb-2">プレビュー画面</h2>
           <canvas 
             ref={previewCanvasRef} 
             width={250} 
@@ -116,7 +116,7 @@ export default function DrawingApp() {
         </div>
       </div>
       <Button onClick={handleReset} variant="outline">
-        Reset Canvas
+        リセットボタン
       </Button>
     </div>
   )
