@@ -112,10 +112,10 @@ export default function About() {
           <p>小文字が文頭に来る場合は、前の文章のししょ尾に表示するしょうがっこうしょうがっっっ</p>
           <p>{<img src="https://placehold.jp/60x60.png" />}</p>
           <p className=''>縦書き:Tab 1.</p>
-          <p className="underline decoration-solid">下線</p>
-          <p className='underline decoration-wavy'>波線</p>
-          <p className='underline decoration-double'>二重線</p>
-          <p className='underline decoration-dashed decoration-orange-700'>破線</p>
+          <p className="text-decoration-line decoration-solid">下線</p>
+          <p className='text-decoration-line decoration-wavy'>波線</p>
+          <p className='text-decoration-line decoration-double'>二重線</p>
+          <p className='text-decoration-line decoration-dashed decoration-orange-700'>破線</p>
           <p className='text-4xl text-red-500'>フォント変更</p>
           <p className='text-3xl'>
             この

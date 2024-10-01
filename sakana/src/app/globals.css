@@ -123,3 +123,9 @@ body {
   transform: translateX(0); /* Return to original position */
 }
 
+.text-decoration-line {
+  text-decoration-line: underline;
+  @supports (hanging-punctuation: first) {
+    text-decoration-line: overline;
+  }
+}
