@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function About() {
+export default function Tab() {
   const [activeTab, setActiveTab] = useState(0);
   const [openTabs, setOpenTabs] = useState<boolean[]>(Array(30).fill(false));
   const scrollPositions = useRef<number[]>(Array(30).fill(0));
@@ -50,31 +51,7 @@ export default function About() {
     });
   };
 
-  const fixPunctuation = (text: string) => {
-    // 行頭禁則文字
-    const startForbidden = /^[、。！？」』）］｝〕〉》"'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮ]/;
-    
-    // 行末禁則文字
-    const endForbidden = /[「『（［｛〔〈《"']/;
-  
-    // テキストを文字配列に分割
-    const chars = text.split('');
-  
-    // 禁則処理を適用
-    for (let i = 0; i < chars.length - 1; i++) {
-      if (startForbidden.test(chars[i + 1])) {
-        // 次の文字が行頭禁則文字の場合、現在の文字にくっつける
-        chars[i] += chars[i + 1];
-        chars.splice(i + 1, 1);
-      } else if (endForbidden.test(chars[i])) {
-        // 現在の文字が行末禁則文字の場合、次の文字とくっつける
-        chars[i] += chars[i + 1];
-        chars.splice(i + 1, 1);
-      }
-    }
-  
-    return chars.join('');
-  };
+
 
   const tabContents = [
     Array(5).fill(null).map((_, i) => (
@@ -83,7 +60,6 @@ export default function About() {
           <h1 className='text-4xl font-bold m-2'>禁則処理</h1>
           <h2>禁則１：行頭禁則文字</h2>
           <p>「以下の問いに答えよ」「以下の問いに答え」</p>
-          {/* <p>{fixPunctuation("")}</p> */}
           <p><span className='inline-block'>句読点が文頭に来る場合は、前の文章</span><span className='inline-block'>入力値、</span></p>
           <p>句読点が文頭に来る場合は、前の文章最後。。</p>
           <p>句読点が文頭に来る場合は、前の文章最後、、</p>
@@ -171,6 +147,10 @@ export default function About() {
 
   return (
     <section className="p-4 text-white">
+      <div className="flex items-center justify-between mb-4">
+    
+
+      </div>
       <div className="max-w-4xl mx-auto">
 
         <div className="w-full mx-auto p-4">
