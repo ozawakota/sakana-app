@@ -140,57 +140,74 @@ export default function Tab() {
         </div>
       </React.Fragment>
     )),
-    ...Array(29).fill(null).map((_, i) => 
-      Array(50).fill(null).map((_, j) => <p key={j}>タブ:Tab {i + 2}.</p>)
+    ...Array(9).fill(null).map((_, i) => 
+      Array(10).fill(null).map((_, j) => <p key={j}>タブ:Tab {i + 2}.</p>)
     )
   ];
 
+  const totalTabs = tabContents.length;
+
+  const handleNextTab = () => {
+    if (activeTab < totalTabs - 1) {
+      setActiveTab(prev => prev + 1);
+    }
+  };
+
+  const handlePrevTab = () => {
+    if (activeTab > 0) {
+      setActiveTab(prev => prev - 1);
+    }
+  };
+
+
   return (
     <section className="p-4 text-white">
-      <div className="flex items-center justify-between mb-4">
-    
-
-      </div>
       <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={handlePrevTab} disabled={activeTab === 0} className='bg-gray-800 text-white px-4 py-2 rounded'>
+            <ChevronLeft />
+          </button>
+          <span>Tab {activeTab + 1} of {totalTabs}</span>
+          <button onClick={handleNextTab} disabled={activeTab === totalTabs - 1} className='bg-gray-800 text-white px-4 py-2 rounded'>
+            <ChevronRight />
+          </button>
+        </div>
 
         <div className="w-full mx-auto p-4">
           <div 
-            ref={tabsRef}
             className="flex overflow-x-auto whitespace-nowrap border-b scrollbar-hide"
           >
-            {Array.from({ length: 15 }, (_, i) => (
+            {tabContents.map((_, index) => (
               <button
-                key={i}
+                key={index}
                 className={`flex-shrink-0 px-4 py-2 bg-white ${
-                  activeTab === i
+                  activeTab === index
                     ? 'border-b-2 border-blue-500 text-blue-500'
                     : 'text-gray-500'
                 }`}
-                onClick={() => handleTabClick(i)}
+                onClick={() => setActiveTab(index)}
               >
-                Tab {i + 1}
+                Tab {index + 1}
               </button>
             ))}
           </div>
           <div className='relative h-[400px]'>
-            {Array.from({ length: 15 }, (_, i) => (
-              <div key={i} className={activeTab === i ? '' : 'hidden'}>
-                <button
-                  className="mt-4 bg-gray-800 text-white px-4 py-2 rounded"
-                  onClick={() => toggleTab(i)}
+            <div className={activeTab < totalTabs ? '' : 'hidden'}>
+              <button
+                className="mt-4 bg-gray-800 text-white px-4 py-2 rounded"
+                onClick={() => toggleTab(activeTab)}
+              >
+                {openTabs[activeTab] ? '閉じる' : '開く'} 解答画面
+              </button>
+              <div className={`w-[600px] h-[400px] bg-white text-black p-2 absolute t-contents ${openTabs[activeTab] ? 'show' : ''}`}>
+                <div
+                  ref={el => contentRefs.current[activeTab] = el}
+                  className="mt-2 h-[360px] overflow-y-auto"
                 >
-                  {openTabs[i] ? '閉じる' : '開く'} 解答画面
-                </button>
-                <div className={`w-[600px] h-[400px] bg-white text-black p-2 absolute t-contents ${openTabs[i] ? 'show' : ''}`}>
-                  <div
-                    ref={el => contentRefs.current[i] = el}
-                    className="mt-2 h-[360px] overflow-y-auto"
-                  >
-                    {tabContents[i]}
-                  </div>
+                  {tabContents[activeTab]}
                 </div>
               </div>
-            ))}
+            </div>
             <div>
               <img src="https://placehold.jp/860x400.png" alt="logo" />
             </div>
