@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Tab() {
   const [activeTab, setActiveTab] = useState(0);
@@ -50,7 +49,6 @@ export default function Tab() {
       return newOpenTabs;
     });
   };
-
 
 
   const tabContents = [
@@ -145,34 +143,13 @@ export default function Tab() {
     )
   ];
 
-  const totalTabs = tabContents.length;
-
-  const handleNextTab = () => {
-    if (activeTab < totalTabs - 1) {
-      setActiveTab(prev => prev + 1);
-    }
-  };
-
-  const handlePrevTab = () => {
-    if (activeTab > 0) {
-      setActiveTab(prev => prev - 1);
-    }
-  };
-
-
   return (
     <section className="p-4 text-white">
-      <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-4">
-        <button onClick={handlePrevTab} disabled={activeTab === 0} className='bg-gray-800 text-white px-4 py-2 rounded'>
-          <ChevronLeft />
-        </button>
-        <span>Tab {activeTab + 1} of {totalTabs}</span>
-        <button onClick={handleNextTab} disabled={activeTab === totalTabs - 1} className='bg-gray-800 text-white px-4 py-2 rounded'>
-          <ChevronRight />
-        </button>
-      </div>
 
+
+      </div>
+      <div className="max-w-4xl mx-auto">
 
         <div className="w-full mx-auto p-4">
           <div 

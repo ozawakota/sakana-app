@@ -140,7 +140,7 @@ export default function Tab() {
         </div>
       </React.Fragment>
     )),
-    ...Array(9).fill(null).map((_, i) => 
+    ...Array(12).fill(null).map((_, i) => 
       Array(10).fill(null).map((_, j) => <p key={j}>タブ:Tab {i + 2}.</p>)
     )
   ];
@@ -172,47 +172,50 @@ export default function Tab() {
             <ChevronRight />
           </button>
         </div>
-
         <div className="w-full mx-auto p-4">
           <div 
+            ref={tabsRef}
             className="flex overflow-x-auto whitespace-nowrap border-b scrollbar-hide"
           >
-            {tabContents.map((_, index) => (
+            {tabContents.map((_, i) => (
               <button
-                key={index}
+                key={i}
                 className={`flex-shrink-0 px-4 py-2 bg-white ${
-                  activeTab === index
+                  activeTab === i
                     ? 'border-b-2 border-blue-500 text-blue-500'
                     : 'text-gray-500'
                 }`}
-                onClick={() => setActiveTab(index)}
+                onClick={() => handleTabClick(i)}
               >
-                Tab {index + 1}
+                Tab {i + 1}
               </button>
             ))}
           </div>
           <div className='relative h-[400px]'>
-            <div className={activeTab < totalTabs ? '' : 'hidden'}>
-              <button
-                className="mt-4 bg-gray-800 text-white px-4 py-2 rounded"
-                onClick={() => toggleTab(activeTab)}
-              >
-                {openTabs[activeTab] ? '閉じる' : '開く'} 解答画面
-              </button>
-              <div className={`w-[600px] h-[400px] bg-white text-black p-2 absolute t-contents ${openTabs[activeTab] ? 'show' : ''}`}>
-                <div
-                  ref={el => contentRefs.current[activeTab] = el}
-                  className="mt-2 h-[360px] overflow-y-auto"
+          {tabContents.map((_, i) => (
+              <div key={i} className={activeTab === i ? '' : 'hidden'}>
+                <button
+                  className="mt-4 bg-gray-800 text-white px-4 py-2 rounded"
+                  onClick={() => toggleTab(i)}
                 >
-                  {tabContents[activeTab]}
+                  {openTabs[i] ? '閉じる' : '開く'} 解答画面
+                </button>
+                <div className={`w-[600px] h-[400px] bg-white text-black p-2 absolute t-contents ${openTabs[i] ? 'show' : ''}`}>
+                  <div
+                    ref={el => contentRefs.current[i] = el}
+                    className="mt-2 h-[360px] overflow-y-auto"
+                  >
+                    {tabContents[i]}
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
             <div>
               <img src="https://placehold.jp/860x400.png" alt="logo" />
             </div>
           </div>
         </div>
+
       </div>
     </section>
   )
