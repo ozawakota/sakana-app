@@ -125,7 +125,7 @@ body {
 
 .text-decoration-line {
   text-decoration-line: underline;
-  @supports (hanging-punctuation: first) {
+  @supports (hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none) {
     text-decoration-line: overline;
   }
 }
