@@ -87,7 +87,7 @@ export default function Tab() {
           <p>」が文頭に来る場合は、前の文章の最後尾に」表示する。</p>
           <p>小文字が文頭に来る場合は、前の文章のししょ尾に表示するしょうがっこうしょうがっっっ</p>
           <p>{<img src="https://placehold.jp/60x60.png" />}</p>
-          <p className=''>縦書き:Tab 1.</p>
+          <p className='text-decoration-line decoration-solid'>縦書き:Tab 1.</p>
           <p className="text-decoration-line decoration-solid">下線</p>
           <p className='text-decoration-line decoration-wavy'>波線</p>
           <p className='text-decoration-line decoration-double'>二重線</p>
@@ -140,7 +140,7 @@ export default function Tab() {
         </div>
       </React.Fragment>
     )),
-    ...Array(12).fill(null).map((_, i) => 
+    ...Array(4).fill(null).map((_, i) => 
       Array(10).fill(null).map((_, j) => <p key={j}>タブ:Tab {i + 2}.</p>)
     )
   ];
