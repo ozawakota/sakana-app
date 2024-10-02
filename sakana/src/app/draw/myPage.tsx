@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
 import { Button } from "@/components/ui/button"
@@ -35,7 +35,7 @@ export default function DrawingApp() {
         drawLine(previewCtx, data.x0, data.y0, data.x1, data.y1)
       } else if (data.type === 'reset') {
         setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
-        setWhiteBackground(previewCtx, previewCanvas.width, previewCanvas.height)
+        setWhiteBackground(previewCtx, previewCanvas.width * 2, previewCanvas.height * 2)
       }
     }
 
@@ -120,9 +120,11 @@ export default function DrawingApp() {
           />
         </div>
       </div>
-      <Button onClick={handleReset} variant="outline">
-        リセットボタン
-      </Button>
+      <div className="flex space-x-4">
+        <Button onClick={handleReset} variant="outline">
+          リセットボタン
+        </Button>
+      </div>
     </div>
   )
 }
