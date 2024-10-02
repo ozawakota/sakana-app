@@ -2,11 +2,14 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { Button } from "@/components/ui/button"
+import { SaveIcon } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function DrawingApp() {
   const mainCanvasRef = useRef<HTMLCanvasElement>(null)
   const previewCanvasRef = useRef<HTMLCanvasElement>(null)
   const [ws, setWs] = useState<WebSocket | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     const mainCanvas = mainCanvasRef.current
@@ -98,6 +101,40 @@ export default function DrawingApp() {
     ws?.send(JSON.stringify({ type: 'reset' }))
   }
 
+  const handleSave = () => {
+    const mainCanvas = mainCanvasRef.current
+    if (!mainCanvas) {
+      toast({
+        title: "エラー",
+        description: "画像を保存できませんでした。",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      const dataUrl = mainCanvas.toDataURL('image/png')
+      const link = document.createElement('a')
+      link.href = dataUrl
+      link.download = `drawing-${Date.now()}.png`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      toast({
+        title: "保存成功",
+        description: "画像を高画質で保存しました。",
+      })
+    } catch (error) {
+      console.error('Error saving image:', error)
+      toast({
+        title: "エラー",
+        description: "画像の保存中にエラーが発生しました。",
+        variant: "destructive",
+      })
+    }
+  }
+
   return (
     <div className="flex flex-col items-center space-y-4">
       <div className="flex space-x-4">
@@ -123,6 +160,10 @@ export default function DrawingApp() {
       <div className="flex space-x-4">
         <Button onClick={handleReset} variant="outline">
           リセットボタン
+        </Button>
+        <Button onClick={handleSave} variant="outline">
+          <SaveIcon className="w-4 h-4 mr-2" />
+          保存
         </Button>
       </div>
     </div>
