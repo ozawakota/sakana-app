@@ -20,6 +20,10 @@ export default function DrawingApp() {
     previewCanvas.height = mainCanvas.height / 2
     previewCtx.scale(0.5, 0.5)
 
+    // Set white background for both canvases
+    setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
+    setWhiteBackground(previewCtx, previewCanvas.width * 2, previewCanvas.height * 2)
+
     // WebSocket connection
     const socket = new WebSocket('ws://localhost:3000')
     setWs(socket)
@@ -30,8 +34,8 @@ export default function DrawingApp() {
         drawLine(mainCtx, data.x0, data.y0, data.x1, data.y1)
         drawLine(previewCtx, data.x0, data.y0, data.x1, data.y1)
       } else if (data.type === 'reset') {
-        clearCanvas(mainCtx, mainCanvas.width, mainCanvas.height)
-        clearCanvas(previewCtx, previewCanvas.width, previewCanvas.height)
+        setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
+        setWhiteBackground(previewCtx, previewCanvas.width, previewCanvas.height)
       }
     }
 
@@ -77,8 +81,9 @@ export default function DrawingApp() {
     ctx.stroke()
   }
 
-  const clearCanvas = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
-    ctx.clearRect(0, 0, width, height)
+  const setWhiteBackground = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0, 0, width, height)
   }
 
   const handleReset = () => {
@@ -88,8 +93,8 @@ export default function DrawingApp() {
     const previewCtx = previewCanvas?.getContext('2d')
     if (!mainCanvas || !mainCtx || !previewCanvas || !previewCtx) return
 
-    clearCanvas(mainCtx, mainCanvas.width, mainCanvas.height)
-    clearCanvas(previewCtx, previewCanvas.width * 2, previewCanvas.height * 2)
+    setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
+    setWhiteBackground(previewCtx, previewCanvas.width * 2, previewCanvas.height * 2)
     ws?.send(JSON.stringify({ type: 'reset' }))
   }
 
