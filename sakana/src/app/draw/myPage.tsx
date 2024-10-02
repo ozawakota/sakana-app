@@ -19,13 +19,15 @@ export default function DrawingApp() {
     if (!mainCanvas || !mainCtx || !previewCanvas || !previewCtx) return
 
     // Set up the preview canvas
-    previewCanvas.width = mainCanvas.width / 2
-    previewCanvas.height = mainCanvas.height / 2
-    previewCtx.scale(0.5, 0.5)
+    previewCanvas.width = 250
+    previewCanvas.height = 250
+    const scale = Math.min(250 / 800, 250 / 450)
+    const offsetX = (250 - 800 * scale) / 2
+    const offsetY = (250 - 450 * scale) / 2
 
     // Set white background for both canvases
     setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
-    setWhiteBackground(previewCtx, previewCanvas.width * 2, previewCanvas.height * 2)
+    setWhiteBackground(previewCtx, previewCanvas.width, previewCanvas.height)
 
     // WebSocket connection
     const socket = new WebSocket('ws://localhost:3000')
@@ -35,10 +37,10 @@ export default function DrawingApp() {
       const data = JSON.parse(event.data)
       if (data.type === 'draw') {
         drawLine(mainCtx, data.x0, data.y0, data.x1, data.y1)
-        drawLine(previewCtx, data.x0, data.y0, data.x1, data.y1)
+        drawLinePreview(previewCtx, data.x0, data.y0, data.x1, data.y1, scale, offsetX, offsetY)
       } else if (data.type === 'reset') {
         setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
-        setWhiteBackground(previewCtx, previewCanvas.width * 2, previewCanvas.height * 2)
+        setWhiteBackground(previewCtx, previewCanvas.width, previewCanvas.height)
       }
     }
 
@@ -52,7 +54,7 @@ export default function DrawingApp() {
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
       drawLine(mainCtx, lastX, lastY, x, y)
-      drawLine(previewCtx, lastX, lastY, x, y)
+      drawLinePreview(previewCtx, lastX, lastY, x, y, scale, offsetX, offsetY)
       socket.send(JSON.stringify({ type: 'draw', x0: lastX, y0: lastY, x1: x, y1: y }))
       lastX = x
       lastY = y
@@ -84,6 +86,13 @@ export default function DrawingApp() {
     ctx.stroke()
   }
 
+  const drawLinePreview = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, scale: number, offsetX: number, offsetY: number) => {
+    ctx.beginPath()
+    ctx.moveTo(x0 * scale + offsetX, y0 * scale + offsetY)
+    ctx.lineTo(x1 * scale + offsetX, y1 * scale + offsetY)
+    ctx.stroke()
+  }
+
   const setWhiteBackground = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     ctx.fillStyle = 'white'
     ctx.fillRect(0, 0, width, height)
@@ -97,7 +106,7 @@ export default function DrawingApp() {
     if (!mainCanvas || !mainCtx || !previewCanvas || !previewCtx) return
 
     setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
-    setWhiteBackground(previewCtx, previewCanvas.width * 2, previewCanvas.height * 2)
+    setWhiteBackground(previewCtx, previewCanvas.width, previewCanvas.height)
     ws?.send(JSON.stringify({ type: 'reset' }))
   }
 
@@ -136,23 +145,23 @@ export default function DrawingApp() {
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <div className="flex space-x-4">
-        <div className="flex flex-col items-center">
-          <h2 className="text-lg font-semibold mb-2">入力画面</h2>
-          <canvas 
-            ref={mainCanvasRef} 
-            width={500} 
-            height={500} 
-            className="border border-gray-300 rounded-lg shadow-md"
-          />
-        </div>
+    <div className="flex flex-col items-center space-y-4 p-4">
+      <div className="flex flex-col items-center space-y-4">
         <div className="flex flex-col items-center">
           <h2 className="text-lg font-semibold mb-2">プレビュー画面</h2>
           <canvas 
             ref={previewCanvasRef} 
             width={250} 
             height={250} 
+            className="border border-gray-300 rounded-lg shadow-md"
+          />
+        </div>
+        <div className="flex flex-col items-center">
+          <h2 className="text-lg font-semibold mb-2">入力画面</h2>
+          <canvas 
+            ref={mainCanvasRef} 
+            width={800} 
+            height={450} 
             className="border border-gray-300 rounded-lg shadow-md"
           />
         </div>
