@@ -51,8 +51,6 @@ export default function Tab() {
     });
   };
 
-
-
   const tabContents = [
     Array(5).fill(null).map((_, i) => (
       <React.Fragment key={i}>
@@ -63,7 +61,7 @@ export default function Tab() {
           <p><span className='inline-block'>句読点が文頭に来る場合は、前の文章</span><span className='inline-block'>入力値、</span></p>
           <p>句読点が文頭に来る場合は、前の文章最後。。</p>
           <p>句読点が文頭に来る場合は、前の文章最後、、</p>
-          <p>句読点が文頭に来る場合は、前の文章最後></p>
+          <p>句読点が文頭に来る場合は、前の文章最後&gt;</p>
           <p>句読点が文頭に来る場合は、前の文章最後」」</p>
           <p>句読点が文頭に来る場合は、前の文章最後】】</p>
           <p>句読点が文頭に来る場合は、前の文章最後＞</p>
@@ -86,7 +84,7 @@ export default function Tab() {
           <p>「が文末に来る場合は、次の文章の頭に表「表示する。</p>
           <p>」が文頭に来る場合は、前の文章の最後尾に」表示する。</p>
           <p>小文字が文頭に来る場合は、前の文章のししょ尾に表示するしょうがっこうしょうがっっっ</p>
-          <p>{<img src="https://placehold.jp/60x60.png" />}</p>
+          <p><img src="https://placehold.jp/60x60.png" alt="Placeholder" /></p>
           <p className='text-decoration-line decoration-solid'>縦書き:Tab 1.</p>
           <p className="text-decoration-line decoration-solid">下線</p>
           <p className='text-decoration-line decoration-wavy'>波線</p>
@@ -159,7 +157,6 @@ export default function Tab() {
     }
   };
 
-
   return (
     <section className="p-4 text-white">
       <div className="max-w-4xl mx-auto">
@@ -215,7 +212,6 @@ export default function Tab() {
             </div>
           </div>
         </div>
-
       </div>
     </section>
   )
