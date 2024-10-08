@@ -49,6 +49,7 @@ export default function UndoApp() {
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
   const [isDrawing, setIsDrawing] = useState(false)
   const [currentStroke, setCurrentStroke] = useState<{ x: number; y: number }[]>([])
+  const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null)
 
   const CANVAS_WIDTH = 400
   const CANVAS_HEIGHT = 400
@@ -69,12 +70,17 @@ export default function UndoApp() {
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
 
-    redrawCanvas()
+    // Load background image
+    const img = new Image()
+    img.src = 'https://placehold.jp/50x50.png'
+    img.onload = () => {
+      setBackgroundImage(img)
+    }
   }, [])
 
   useEffect(() => {
     redrawCanvas()
-  }, [drawActions])
+  }, [drawActions, backgroundImage])
 
   const redrawCanvas = useCallback(() => {
     const ctx = ctxRef.current
@@ -82,6 +88,13 @@ export default function UndoApp() {
     if (!ctx || !canvas) return
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    // Draw background image
+    if (backgroundImage) {
+      const x = (canvas.width - backgroundImage.width) / 2
+      const y = (canvas.height - backgroundImage.height) / 2
+      ctx.drawImage(backgroundImage, x, y)
+    }
 
     drawActions.forEach(action => {
       ctx.beginPath()
@@ -94,7 +107,7 @@ export default function UndoApp() {
       })
       ctx.stroke()
     })
-  }, [drawActions])
+  }, [drawActions, backgroundImage])
 
   const getCanvasCoordinates = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
