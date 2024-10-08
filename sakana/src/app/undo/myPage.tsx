@@ -76,6 +76,7 @@ export default function UndoApp() {
   const [isDrawing, setIsDrawing] = useState(false)
   const [currentStroke, setCurrentStroke] = useState<{ x: number; y: number }[]>([])
   const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null)
+  const [hasDrawn, setHasDrawn] = useState(false)
   const wsRef = useRef<WebSocket | null>(null)
 
   const CANVAS_WIDTH = 400
@@ -123,9 +124,11 @@ export default function UndoApp() {
       if (action.type === 'reset') {
         resetDrawActions()
         setRedoStack([])
+        setHasDrawn(false)
       } else {
         setDrawActions(prev => [...prev, action])
         setRedoStack([])
+        setHasDrawn(true)
       }
     }
 
@@ -137,7 +140,7 @@ export default function UndoApp() {
   useEffect(() => {
     redrawCanvas()
     redrawPreviewCanvas()
-  }, [drawActions, backgroundImage])
+  }, [drawActions, backgroundImage, hasDrawn])
 
   const redrawCanvas = useCallback(() => {
     const ctx = ctxRef.current
@@ -146,8 +149,8 @@ export default function UndoApp() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    // Draw background image on main canvas
-    if (backgroundImage) {
+    // Draw background image on main canvas only if no drawing has been made
+    if (backgroundImage && !hasDrawn) {
       const x = (canvas.width - backgroundImage.width) / 2
       const y = (canvas.height - backgroundImage.height) / 2
       ctx.drawImage(backgroundImage, x, y)
@@ -166,7 +169,7 @@ export default function UndoApp() {
         ctx.stroke()
       }
     })
-  }, [drawActions, backgroundImage])
+  }, [drawActions, backgroundImage, hasDrawn])
 
   const redrawPreviewCanvas = useCallback(() => {
     const ctx = previewCtxRef.current
@@ -222,6 +225,7 @@ export default function UndoApp() {
     const { x, y } = getCanvasCoordinates(e)
     setIsDrawing(true)
     setCurrentStroke([{ x, y }])
+    setHasDrawn(true)
 
     const ctx = ctxRef.current
     if (ctx) {
@@ -257,6 +261,7 @@ export default function UndoApp() {
   const handleReset = useCallback(() => {
     resetDrawActions()
     setRedoStack([])
+    setHasDrawn(false)
     wsRef.current?.send(JSON.stringify({ type: 'reset', points: [] }))
   }, [resetDrawActions, setRedoStack])
 
