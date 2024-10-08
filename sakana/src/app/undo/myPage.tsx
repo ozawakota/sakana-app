@@ -4,10 +4,10 @@ import { atom, useAtom, useAtomValue } from "jotai"
 import { withUndo } from "jotai-history"
 import { memo, useRef, useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
-import { Undo2, Redo2 } from "lucide-react"
+import { Undo2, Redo2, Trash2 } from "lucide-react"
 
 interface DrawAction {
-  type: 'draw'
+  type: 'draw' | 'reset'
   points: { x: number; y: number }[]
 }
 
@@ -46,40 +46,67 @@ UndoRedoControls.displayName = "UndoRedoControls"
 export default function UndoApp() {
   const [drawActions, setDrawActions] = useAtom(drawActionsAtom)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null)
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
+  const previewCtxRef = useRef<CanvasRenderingContext2D | null>(null)
   const [isDrawing, setIsDrawing] = useState(false)
   const [currentStroke, setCurrentStroke] = useState<{ x: number; y: number }[]>([])
   const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null)
+  const wsRef = useRef<WebSocket | null>(null)
 
   const CANVAS_WIDTH = 400
   const CANVAS_HEIGHT = 400
+  const PREVIEW_SIZE = 200
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    const previewCanvas = previewCanvasRef.current
+    if (!canvas || !previewCanvas) return
 
     canvas.width = CANVAS_WIDTH
     canvas.height = CANVAS_HEIGHT
+    previewCanvas.width = PREVIEW_SIZE
+    previewCanvas.height = PREVIEW_SIZE
 
     const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    const previewCtx = previewCanvas.getContext('2d')
+    if (!ctx || !previewCtx) return
 
     ctxRef.current = ctx
+    previewCtxRef.current = previewCtx
     ctx.strokeStyle = 'black'
     ctx.lineWidth = 2
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
+    previewCtx.strokeStyle = 'black'
+    previewCtx.lineWidth = 1
+    previewCtx.lineCap = 'round'
+    previewCtx.lineJoin = 'round'
 
-    // Load background image
+    // Load background image for main canvas only
     const img = new Image()
     img.src = 'https://placehold.jp/50x50.png'
     img.onload = () => {
       setBackgroundImage(img)
     }
-  }, [])
+
+    // WebSocket connection
+    const ws = new WebSocket('ws://localhost:3000')
+    wsRef.current = ws
+
+    ws.onmessage = (event) => {
+      const action = JSON.parse(event.data) as DrawAction
+      setDrawActions(prev => [...prev, action])
+    }
+
+    return () => {
+      ws.close()
+    }
+  }, [setDrawActions])
 
   useEffect(() => {
     redrawCanvas()
+    redrawPreviewCanvas()
   }, [drawActions, backgroundImage])
 
   const redrawCanvas = useCallback(() => {
@@ -89,7 +116,7 @@ export default function UndoApp() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    // Draw background image
+    // Draw background image on main canvas
     if (backgroundImage) {
       const x = (canvas.width - backgroundImage.width) / 2
       const y = (canvas.height - backgroundImage.height) / 2
@@ -97,17 +124,57 @@ export default function UndoApp() {
     }
 
     drawActions.forEach(action => {
-      ctx.beginPath()
-      action.points.forEach((point, index) => {
-        if (index === 0) {
-          ctx.moveTo(point.x, point.y)
-        } else {
-          ctx.lineTo(point.x, point.y)
+      if (action.type === 'draw') {
+        ctx.beginPath()
+        action.points.forEach((point, index) => {
+          if (index === 0) {
+            ctx.moveTo(point.x, point.y)
+          } else {
+            ctx.lineTo(point.x, point.y)
+          }
+        })
+        ctx.stroke()
+      } else if (action.type === 'reset') {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        if (backgroundImage) {
+          const x = (canvas.width - backgroundImage.width) / 2
+          const y = (canvas.height - backgroundImage.height) / 2
+          ctx.drawImage(backgroundImage, x, y)
         }
-      })
-      ctx.stroke()
+      }
     })
   }, [drawActions, backgroundImage])
+
+  const redrawPreviewCanvas = useCallback(() => {
+    const ctx = previewCtxRef.current
+    const canvas = previewCanvasRef.current
+    if (!ctx || !canvas) return
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    const scale = PREVIEW_SIZE / CANVAS_WIDTH
+
+    ctx.save()
+    ctx.scale(scale, scale)
+
+    drawActions.forEach(action => {
+      if (action.type === 'draw') {
+        ctx.beginPath()
+        action.points.forEach((point, index) => {
+          if (index === 0) {
+            ctx.moveTo(point.x, point.y)
+          } else {
+            ctx.lineTo(point.x, point.y)
+          }
+        })
+        ctx.stroke()
+      } else if (action.type === 'reset') {
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+      }
+    })
+
+    ctx.restore()
+  }, [drawActions])
 
   const getCanvasCoordinates = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
@@ -133,6 +200,13 @@ export default function UndoApp() {
       ctx.beginPath()
       ctx.moveTo(x, y)
     }
+
+    const previewCtx = previewCtxRef.current
+    if (previewCtx) {
+      const scale = PREVIEW_SIZE / CANVAS_WIDTH
+      previewCtx.beginPath()
+      previewCtx.moveTo(x * scale, y * scale)
+    }
   }, [getCanvasCoordinates])
 
   const draw = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -146,19 +220,43 @@ export default function UndoApp() {
       ctx.lineTo(x, y)
       ctx.stroke()
     }
+
+    const previewCtx = previewCtxRef.current
+    if (previewCtx) {
+      const scale = PREVIEW_SIZE / CANVAS_WIDTH
+      previewCtx.lineTo(x * scale, y * scale)
+      previewCtx.stroke()
+    }
   }, [isDrawing, getCanvasCoordinates])
 
   const stopDrawing = useCallback(() => {
-    if (isDrawing) {
+    if (isDrawing && currentStroke.length > 0) {
       setIsDrawing(false)
-      setDrawActions(prev => [...prev, { type: 'draw', points: currentStroke }])
+      const newAction: DrawAction = { type: 'draw', points: currentStroke }
+      setDrawActions(prev => [...prev, newAction])
       setCurrentStroke([])
+      wsRef.current?.send(JSON.stringify(newAction))
     }
   }, [isDrawing, currentStroke, setDrawActions])
+
+  const handleReset = useCallback(() => {
+    const resetAction: DrawAction = { type: 'reset', points: [] }
+    setDrawActions(prev => [...prev, resetAction])
+    wsRef.current?.send(JSON.stringify(resetAction))
+  }, [setDrawActions])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <div className="w-full max-w-md space-y-4">
+        <h2 className="text-lg font-semibold mb-2">プレビュー画面</h2>
+        <div className="relative w-1/2 mx-auto" style={{ paddingBottom: '50%' }}>
+          <canvas
+            ref={previewCanvasRef}
+            className="absolute top-0 left-0 w-full h-full border border-gray-300 rounded-md shadow-sm bg-white"
+            aria-label="プレビューキャンバス"
+          />
+        </div>
+        <h2 className="text-lg font-semibold mb-2">入力画面</h2>
         <div className="relative w-full" style={{ paddingBottom: '100%' }}>
           <canvas
             ref={canvasRef}
@@ -170,7 +268,17 @@ export default function UndoApp() {
             aria-label="描画キャンバス"
           />
         </div>
-        <UndoRedoControls />
+        <div className="flex justify-between">
+          <UndoRedoControls />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleReset}
+            aria-label="全て消去"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )
