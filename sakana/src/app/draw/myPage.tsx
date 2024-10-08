@@ -11,6 +11,9 @@ export default function DrawingApp() {
   const [ws, setWs] = useState<WebSocket | null>(null)
   const { toast } = useToast()
 
+  const MAIN_SIZE = 600
+  const PREVIEW_SIZE = 250
+
   useEffect(() => {
     const mainCanvas = mainCanvasRef.current
     const previewCanvas = previewCanvasRef.current
@@ -19,15 +22,13 @@ export default function DrawingApp() {
     if (!mainCanvas || !mainCtx || !previewCanvas || !previewCtx) return
 
     // Set up the preview canvas
-    previewCanvas.width = 250
-    previewCanvas.height = 250
-    const scale = Math.min(250 / 800, 250 / 450)
-    const offsetX = (250 - 800 * scale) / 2
-    const offsetY = (250 - 450 * scale) / 2
+    previewCanvas.width = PREVIEW_SIZE
+    previewCanvas.height = PREVIEW_SIZE
+    const scale = PREVIEW_SIZE / MAIN_SIZE
 
     // Set white background for both canvases
-    setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
-    setWhiteBackground(previewCtx, previewCanvas.width, previewCanvas.height)
+    setWhiteBackground(mainCtx, MAIN_SIZE, MAIN_SIZE)
+    setWhiteBackground(previewCtx, PREVIEW_SIZE, PREVIEW_SIZE)
 
     // WebSocket connection
     const socket = new WebSocket('ws://localhost:3000')
@@ -37,10 +38,10 @@ export default function DrawingApp() {
       const data = JSON.parse(event.data)
       if (data.type === 'draw') {
         drawLine(mainCtx, data.x0, data.y0, data.x1, data.y1)
-        drawLinePreview(previewCtx, data.x0, data.y0, data.x1, data.y1, scale, offsetX, offsetY)
+        drawLinePreview(previewCtx, data.x0, data.y0, data.x1, data.y1, scale)
       } else if (data.type === 'reset') {
-        setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
-        setWhiteBackground(previewCtx, previewCanvas.width, previewCanvas.height)
+        setWhiteBackground(mainCtx, MAIN_SIZE, MAIN_SIZE)
+        setWhiteBackground(previewCtx, PREVIEW_SIZE, PREVIEW_SIZE)
       }
     }
 
@@ -54,7 +55,7 @@ export default function DrawingApp() {
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
       drawLine(mainCtx, lastX, lastY, x, y)
-      drawLinePreview(previewCtx, lastX, lastY, x, y, scale, offsetX, offsetY)
+      drawLinePreview(previewCtx, lastX, lastY, x, y, scale)
       socket.send(JSON.stringify({ type: 'draw', x0: lastX, y0: lastY, x1: x, y1: y }))
       lastX = x
       lastY = y
@@ -86,10 +87,10 @@ export default function DrawingApp() {
     ctx.stroke()
   }
 
-  const drawLinePreview = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, scale: number, offsetX: number, offsetY: number) => {
+  const drawLinePreview = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, scale: number) => {
     ctx.beginPath()
-    ctx.moveTo(x0 * scale + offsetX, y0 * scale + offsetY)
-    ctx.lineTo(x1 * scale + offsetX, y1 * scale + offsetY)
+    ctx.moveTo(x0 * scale, y0 * scale)
+    ctx.lineTo(x1 * scale, y1 * scale)
     ctx.stroke()
   }
 
@@ -105,8 +106,8 @@ export default function DrawingApp() {
     const previewCtx = previewCanvas?.getContext('2d')
     if (!mainCanvas || !mainCtx || !previewCanvas || !previewCtx) return
 
-    setWhiteBackground(mainCtx, mainCanvas.width, mainCanvas.height)
-    setWhiteBackground(previewCtx, previewCanvas.width, previewCanvas.height)
+    setWhiteBackground(mainCtx, MAIN_SIZE, MAIN_SIZE)
+    setWhiteBackground(previewCtx, PREVIEW_SIZE, PREVIEW_SIZE)
     ws?.send(JSON.stringify({ type: 'reset' }))
   }
 
@@ -151,18 +152,20 @@ export default function DrawingApp() {
           <h2 className="text-lg font-semibold mb-2">プレビュー画面</h2>
           <canvas 
             ref={previewCanvasRef} 
-            width={250} 
-            height={250} 
+            width={PREVIEW_SIZE} 
+            height={PREVIEW_SIZE} 
             className="border border-gray-300 rounded-lg shadow-md"
+            aria-label="描画プレビュー"
           />
         </div>
         <div className="flex flex-col items-center">
           <h2 className="text-lg font-semibold mb-2">入力画面</h2>
           <canvas 
             ref={mainCanvasRef} 
-            width={800} 
-            height={450} 
+            width={MAIN_SIZE} 
+            height={MAIN_SIZE} 
             className="border border-gray-300 rounded-lg shadow-md"
+            aria-label="描画入力エリア"
           />
         </div>
       </div>
