@@ -1,7 +1,7 @@
 'use client'
 
 import { atom, useAtom, useAtomValue } from "jotai"
-import { withUndo } from "jotai-history"
+import { atomWithReset, useResetAtom } from 'jotai/utils'
 import { memo, useRef, useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Undo2, Redo2, Trash2 } from "lucide-react"
@@ -11,13 +11,35 @@ interface DrawAction {
   points: { x: number; y: number }[]
 }
 
-const drawActionsAtom = atom<DrawAction[]>([])
-const undoDrawActionsAtom = withUndo(drawActionsAtom, 10)
+const drawActionsAtom = atomWithReset<DrawAction[]>([])
+const redoStackAtom = atom<DrawAction[]>([])
 
 let renderCount = 0
 const UndoRedoControls = memo(() => {
   console.log("rerender:", ++renderCount)
-  const { undo, redo, canUndo, canRedo } = useAtomValue(undoDrawActionsAtom)
+  const [drawActions, setDrawActions] = useAtom(drawActionsAtom)
+  const [redoStack, setRedoStack] = useAtom(redoStackAtom)
+  const resetDrawActions = useResetAtom(drawActionsAtom)
+
+  const undo = useCallback(() => {
+    if (drawActions.length > 0) {
+      const lastAction = drawActions[drawActions.length - 1]
+      setDrawActions(prev => prev.slice(0, -1))
+      setRedoStack(prev => [...prev, lastAction])
+    }
+  }, [drawActions, setDrawActions, setRedoStack])
+
+  const redo = useCallback(() => {
+    if (redoStack.length > 0) {
+      const actionToRedo = redoStack[redoStack.length - 1]
+      setRedoStack(prev => prev.slice(0, -1))
+      setDrawActions(prev => [...prev, actionToRedo])
+    }
+  }, [redoStack, setRedoStack, setDrawActions])
+
+  const canUndo = drawActions.length > 0
+  const canRedo = redoStack.length > 0
+
   return (
     <div className="flex space-x-2">
       <Button 
@@ -45,6 +67,8 @@ UndoRedoControls.displayName = "UndoRedoControls"
 
 export default function UndoApp() {
   const [drawActions, setDrawActions] = useAtom(drawActionsAtom)
+  const [redoStack, setRedoStack] = useAtom(redoStackAtom)
+  const resetDrawActions = useResetAtom(drawActionsAtom)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const previewCanvasRef = useRef<HTMLCanvasElement>(null)
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
@@ -96,13 +120,19 @@ export default function UndoApp() {
 
     ws.onmessage = (event) => {
       const action = JSON.parse(event.data) as DrawAction
-      setDrawActions(prev => [...prev, action])
+      if (action.type === 'reset') {
+        resetDrawActions()
+        setRedoStack([])
+      } else {
+        setDrawActions(prev => [...prev, action])
+        setRedoStack([])
+      }
     }
 
     return () => {
       ws.close()
     }
-  }, [setDrawActions])
+  }, [setDrawActions, resetDrawActions, setRedoStack])
 
   useEffect(() => {
     redrawCanvas()
@@ -134,13 +164,6 @@ export default function UndoApp() {
           }
         })
         ctx.stroke()
-      } else if (action.type === 'reset') {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        if (backgroundImage) {
-          const x = (canvas.width - backgroundImage.width) / 2
-          const y = (canvas.height - backgroundImage.height) / 2
-          ctx.drawImage(backgroundImage, x, y)
-        }
       }
     })
   }, [drawActions, backgroundImage])
@@ -168,8 +191,6 @@ export default function UndoApp() {
           }
         })
         ctx.stroke()
-      } else if (action.type === 'reset') {
-        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
       }
     })
 
@@ -235,15 +256,16 @@ export default function UndoApp() {
       const newAction: DrawAction = { type: 'draw', points: currentStroke }
       setDrawActions(prev => [...prev, newAction])
       setCurrentStroke([])
+      setRedoStack([])
       wsRef.current?.send(JSON.stringify(newAction))
     }
-  }, [isDrawing, currentStroke, setDrawActions])
+  }, [isDrawing, currentStroke, setDrawActions, setRedoStack])
 
   const handleReset = useCallback(() => {
-    const resetAction: DrawAction = { type: 'reset', points: [] }
-    setDrawActions(prev => [...prev, resetAction])
-    wsRef.current?.send(JSON.stringify(resetAction))
-  }, [setDrawActions])
+    resetDrawActions()
+    setRedoStack([])
+    wsRef.current?.send(JSON.stringify({ type: 'reset', points: [] }))
+  }, [resetDrawActions, setRedoStack])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
