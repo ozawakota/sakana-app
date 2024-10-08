@@ -180,6 +180,13 @@ export default function UndoApp() {
     ctx.save()
     ctx.scale(scale, scale)
 
+    // Apply anti-aliasing
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
+
+    // Increase line width for preview
+    ctx.lineWidth = 2 / scale
+
     drawActions.forEach(action => {
       if (action.type === 'draw') {
         ctx.beginPath()
@@ -221,13 +228,6 @@ export default function UndoApp() {
       ctx.beginPath()
       ctx.moveTo(x, y)
     }
-
-    const previewCtx = previewCtxRef.current
-    if (previewCtx) {
-      const scale = PREVIEW_SIZE / CANVAS_WIDTH
-      previewCtx.beginPath()
-      previewCtx.moveTo(x * scale, y * scale)
-    }
   }, [getCanvasCoordinates])
 
   const draw = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -240,13 +240,6 @@ export default function UndoApp() {
     if (ctx) {
       ctx.lineTo(x, y)
       ctx.stroke()
-    }
-
-    const previewCtx = previewCtxRef.current
-    if (previewCtx) {
-      const scale = PREVIEW_SIZE / CANVAS_WIDTH
-      previewCtx.lineTo(x * scale, y * scale)
-      previewCtx.stroke()
     }
   }, [isDrawing, getCanvasCoordinates])
 
