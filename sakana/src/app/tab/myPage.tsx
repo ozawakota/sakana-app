@@ -1,6 +1,7 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Tab() {
@@ -14,42 +15,35 @@ export default function Tab() {
     contentRefs.current = contentRefs.current.slice(0, 30);
   }, []);
 
-  useEffect(() => {
-    const handleScroll = (index: number) => {
-      if (contentRefs.current[index]) {
-        scrollPositions.current[index] = contentRefs.current[index]!.scrollTop;
-      }
-    };
+  const handleScroll = useCallback((index: number) => {
+    if (contentRefs.current[index]) {
+      scrollPositions.current[index] = contentRefs.current[index]!.scrollTop;
+    }
+  }, []);
 
+  useEffect(() => {
     openTabs.forEach((isOpen, index) => {
       const content = contentRefs.current[index];
       if (content && isOpen) {
-        content.addEventListener('scroll', () => handleScroll(index));
+        const scrollHandler = () => handleScroll(index);
+        content.addEventListener('scroll', scrollHandler);
         content.scrollTop = scrollPositions.current[index];
+        return () => content.removeEventListener('scroll', scrollHandler);
       }
     });
+  }, [openTabs, handleScroll]);
 
-    return () => {
-      openTabs.forEach((isOpen, index) => {
-        const content = contentRefs.current[index];
-        if (content && isOpen) {
-          content.removeEventListener('scroll', () => handleScroll(index));
-        }
-      });
-    };
-  }, [openTabs]);
-
-  const handleTabClick = (index: number) => {
+  const handleTabClick = useCallback((index: number) => {
     setActiveTab(index);
-  };
+  }, []);
 
-  const toggleTab = (index: number) => {
+  const toggleTab = useCallback((index: number) => {
     setOpenTabs(prev => {
       const newOpenTabs = [...prev];
       newOpenTabs[index] = !newOpenTabs[index];
       return newOpenTabs;
     });
-  };
+  }, []);
 
   const tabContents = [
     Array(5).fill(null).map((_, i) => (
@@ -84,7 +78,9 @@ export default function Tab() {
           <p>「が文末に来る場合は、次の文章の頭に表「表示する。</p>
           <p>」が文頭に来る場合は、前の文章の最後尾に」表示する。</p>
           <p>小文字が文頭に来る場合は、前の文章のししょ尾に表示するしょうがっこうしょうがっっっ</p>
-          <p><img src="https://placehold.jp/60x60.png" alt="Placeholder" /></p>
+          <div className="relative w-[60px] h-[60px]">
+            <Image src="/placeholder.svg" alt="Placeholder" width={60} height={60} />
+          </div>
           <p className='text-decoration-line decoration-solid'>縦書き:Tab 1.</p>
           <p className="text-decoration-line decoration-solid">下線</p>
           <p className='text-decoration-line decoration-wavy'>波線</p>
@@ -138,24 +134,24 @@ export default function Tab() {
         </div>
       </React.Fragment>
     )),
-    ...Array(4).fill(null).map((_, i) => 
+    ...Array(30).fill(null).map((_, i) => 
       Array(10).fill(null).map((_, j) => <p key={j}>タブ:Tab {i + 2}.</p>)
     )
   ];
 
   const totalTabs = tabContents.length;
 
-  const handleNextTab = () => {
-    if (activeTab < totalTabs - 1) {
-      setActiveTab(prev => prev + 1);
-    }
-  };
+  const handleNextTab = useCallback(() => {
+    setActiveTab(prev => Math.min(prev + 1, totalTabs - 1));
+  }, [totalTabs]);
 
-  const handlePrevTab = () => {
-    if (activeTab > 0) {
-      setActiveTab(prev => prev - 1);
-    }
-  };
+  const handlePrevTab = useCallback(() => {
+    setActiveTab(prev => Math.max(prev - 1, 0));
+  }, []);
+
+  const setContentRef = useCallback((el: HTMLDivElement | null, index: number) => {
+    contentRefs.current[index] = el;
+  }, []);
 
   return (
     <section className="p-4 text-white">
@@ -199,7 +195,7 @@ export default function Tab() {
                 </button>
                 <div className={`w-[600px] h-[400px] bg-white text-black p-2 absolute t-contents ${openTabs[i] ? 'show' : ''}`}>
                   <div
-                    ref={el => contentRefs.current[i] = el}
+                    ref={(el) => setContentRef(el, i)}
                     className="mt-2 h-[360px] overflow-y-auto"
                   >
                     {tabContents[i]}
@@ -207,8 +203,13 @@ export default function Tab() {
                 </div>
               </div>
             ))}
-            <div>
-              <img src="https://placehold.jp/860x400.png" alt="logo" />
+            <div className="relative w-[860px] h-[400px]">
+              <Image 
+                src="/images/dummy.png" 
+                alt="logo" 
+                layout="fill" 
+                objectFit="cover"
+              />
             </div>
           </div>
         </div>
