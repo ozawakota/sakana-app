@@ -24,8 +24,6 @@ const UndoRedoControls = memo(() => {
   const undo = useCallback(() => {
     if (drawActions.length > 0) {
       const lastAction = drawActions[drawActions.length - 1]
-      console.log("ozawa", lastAction);
-      
       setDrawActions(prev => prev.slice(0, -1))
       setRedoStack(prev => [...prev, lastAction])
     }
@@ -85,67 +83,6 @@ export default function UndoApp() {
   const CANVAS_HEIGHT = 400
   const PREVIEW_SIZE = 200
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const previewCanvas = previewCanvasRef.current
-    if (!canvas || !previewCanvas) return
-
-    canvas.width = CANVAS_WIDTH
-    canvas.height = CANVAS_HEIGHT
-    previewCanvas.width = PREVIEW_SIZE
-    previewCanvas.height = PREVIEW_SIZE
-
-    const ctx = canvas.getContext('2d')
-    const previewCtx = previewCanvas.getContext('2d')
-    if (!ctx || !previewCtx) return
-
-    ctxRef.current = ctx
-    previewCtxRef.current = previewCtx
-    ctx.strokeStyle = 'black'
-    ctx.lineWidth = 2
-    ctx.lineCap = 'round'
-    ctx.lineJoin = 'round'
-    previewCtx.strokeStyle = 'black'
-    previewCtx.lineWidth = 1
-    previewCtx.lineCap = 'round'
-    previewCtx.lineJoin = 'round'
-
-    // Load background image for main canvas only
-    const img = new Image()
-    img.src = 'https://picsum.photos/200/200'
-    img.onload = () => {
-      setBackgroundImage(img)
-    }
-
-    // WebSocket connection
-    const ws = new WebSocket('ws://localhost:3000')
-    wsRef.current = ws
-
-    ws.onmessage = (event) => {
-      const action = JSON.parse(event.data) as DrawAction
-      console.log("onmessage~");
-      
-      if (action.type === 'reset') {
-        resetDrawActions()
-        setRedoStack([])
-        setHasDrawn(false)
-      } else {
-        setDrawActions(prev => [...prev, action])
-        setRedoStack([])
-        setHasDrawn(true)
-      }
-    }
-
-    return () => {
-      ws.close()
-    }
-  }, [setDrawActions, resetDrawActions, setRedoStack])
-
-  useEffect(() => {
-    redrawCanvas()
-    redrawPreviewCanvas()
-  }, [drawActions, backgroundImage, hasDrawn])
-
   const redrawCanvas = useCallback(() => {
     const ctx = ctxRef.current
     const canvas = canvasRef.current
@@ -153,7 +90,6 @@ export default function UndoApp() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    // Draw background image on main canvas only if no drawing has been made
     if (backgroundImage && !hasDrawn) {
       const x = (canvas.width - backgroundImage.width) / 2
       const y = (canvas.height - backgroundImage.height) / 2
@@ -187,11 +123,9 @@ export default function UndoApp() {
     ctx.save()
     ctx.scale(scale, scale)
 
-    // Apply anti-aliasing
     ctx.imageSmoothingEnabled = true
     ctx.imageSmoothingQuality = 'high'
 
-    // Increase line width for preview
     ctx.lineWidth = 2 / scale
 
     drawActions.forEach(action => {
@@ -210,6 +144,63 @@ export default function UndoApp() {
 
     ctx.restore()
   }, [drawActions])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const previewCanvas = previewCanvasRef.current
+    if (!canvas || !previewCanvas) return
+
+    canvas.width = CANVAS_WIDTH
+    canvas.height = CANVAS_HEIGHT
+    previewCanvas.width = PREVIEW_SIZE
+    previewCanvas.height = PREVIEW_SIZE
+
+    const ctx = canvas.getContext('2d')
+    const previewCtx = previewCanvas.getContext('2d')
+    if (!ctx || !previewCtx) return
+
+    ctxRef.current = ctx
+    previewCtxRef.current = previewCtx
+    ctx.strokeStyle = 'black'
+    ctx.lineWidth = 2
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+    previewCtx.strokeStyle = 'black'
+    previewCtx.lineWidth = 1
+    previewCtx.lineCap = 'round'
+    previewCtx.lineJoin = 'round'
+
+    const img = new Image()
+    img.src = 'https://placehold.jp/50x50.png'
+    img.onload = () => {
+      setBackgroundImage(img)
+    }
+
+    const ws = new WebSocket('ws://localhost:3000')
+    wsRef.current = ws
+
+    ws.onmessage = (event) => {
+      const action = JSON.parse(event.data) as DrawAction
+      if (action.type === 'reset') {
+        resetDrawActions()
+        setRedoStack([])
+        setHasDrawn(false)
+      } else {
+        setDrawActions(prev => [...prev, action])
+        setRedoStack([])
+        setHasDrawn(true)
+      }
+    }
+
+    return () => {
+      ws.close()
+    }
+  }, [setDrawActions, resetDrawActions, setRedoStack])
+
+  useEffect(() => {
+    redrawCanvas()
+    redrawPreviewCanvas()
+  }, [drawActions, backgroundImage, hasDrawn, redrawCanvas, redrawPreviewCanvas])
 
   const getCanvasCoordinates = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
