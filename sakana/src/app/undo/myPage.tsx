@@ -171,7 +171,7 @@ export default function UndoApp() {
     previewCtx.lineJoin = 'round'
 
     const img = new Image()
-    img.src = 'https://placehold.jp/50x50.png'
+    img.src = 'https://picsum.photos/200/200'
     img.onload = () => {
       setBackgroundImage(img)
     }
