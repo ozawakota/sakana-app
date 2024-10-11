@@ -24,6 +24,8 @@ const UndoRedoControls = memo(() => {
   const undo = useCallback(() => {
     if (drawActions.length > 0) {
       const lastAction = drawActions[drawActions.length - 1]
+      console.log("ozawa", lastAction);
+      
       setDrawActions(prev => prev.slice(0, -1))
       setRedoStack(prev => [...prev, lastAction])
     }
@@ -110,7 +112,7 @@ export default function UndoApp() {
 
     // Load background image for main canvas only
     const img = new Image()
-    img.src = 'https://placehold.jp/50x50.png'
+    img.src = 'https://picsum.photos/200/200'
     img.onload = () => {
       setBackgroundImage(img)
     }
@@ -121,6 +123,8 @@ export default function UndoApp() {
 
     ws.onmessage = (event) => {
       const action = JSON.parse(event.data) as DrawAction
+      console.log("onmessage~");
+      
       if (action.type === 'reset') {
         resetDrawActions()
         setRedoStack([])
