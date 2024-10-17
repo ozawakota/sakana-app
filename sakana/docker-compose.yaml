@@ -18,23 +18,9 @@ services:
     networks:
       - app_network
 
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: dev_mailserver
-    ports:
-      - "1025:1025"  # SMTP server
-      - "8025:8025"  # Web UI
-    environment:
-      MH_STORAGE: maildir
-      MH_MAILDIR_PATH: /maildir
-    volumes:
-      - mailhog_data:/maildir
-    networks:
-      - app_network
 
 volumes:
   mysql_data:
-  mailhog_data:
 
 networks:
   app_network:
