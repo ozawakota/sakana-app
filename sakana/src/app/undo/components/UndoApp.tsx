@@ -20,6 +20,7 @@ interface StrokeData {
   y: number;
   canvasWidth: number;
   canvasHeight: number;
+  points: { x: number; y: number }[];
 }
 
 export default function UndoApp() {
@@ -51,14 +52,19 @@ export default function UndoApp() {
 
   const handleStopDrawing = useCallback(async () => {
     const result = stopDrawing()
+    
+    console.log('====================================');
+    console.log(result, "保存します");
+    console.log('====================================');
+    
     if (result && result.type === 'draw' && result.points.length > 0) {
-      const lastPoint = result.points[result.points.length - 1]
       setDrawActions(prev => [...prev, result])
       const strokeData: StrokeData = {
-        x: lastPoint.x,
-        y: lastPoint.y,
+        x: result.points[0].x,
+        y: result.points[0].y,
         canvasWidth: CANVAS_WIDTH,
-        canvasHeight: CANVAS_HEIGHT
+        canvasHeight: CANVAS_HEIGHT,
+        points: result.points
       }
       await saveStroke(strokeData)
     }
