@@ -37,9 +37,6 @@ const UndoRedoControls = memo(() => {
       const actionToRedo = redoStack[redoStack.length - 1]
       setRedoStack(prev => prev.slice(0, -1))
       setDrawActions(prev => [...prev, actionToRedo])
-      console.log('Redo - Added action:', actionToRedo)
-      console.log('Current draw actions:', [...drawActions, actionToRedo])
-      console.log('Redo stack:', redoStack.slice(0, -1))
     }
   }, [redoStack, setRedoStack, setDrawActions])
 

@@ -1,12 +1,12 @@
-import MyPage from "./myPage"
+'use client'
 
-export const metadata = {
-  title: "お絵描きページ",
-  description: "魚図鑑についてページ",
+import UndoApp from './components/UndoApp'
+import { Provider } from 'jotai'
+
+export default function Page() {
+  return (
+    <Provider>
+      <UndoApp />
+    </Provider>
+  )
 }
-
-const Draw = () => {
-    return <MyPage/>
-}
-
-export default Draw
