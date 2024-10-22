@@ -26,6 +26,9 @@ const UndoRedoControls = memo(() => {
       const lastAction = drawActions[drawActions.length - 1]
       setDrawActions(prev => prev.slice(0, -1))
       setRedoStack(prev => [...prev, lastAction])
+      console.log('Undo - Removed action:', lastAction)
+      console.log('Current draw actions:', drawActions.slice(0, -1))
+      console.log('Redo stack:', [...redoStack, lastAction])
     }
   }, [drawActions, setDrawActions, setRedoStack])
 
@@ -34,6 +37,9 @@ const UndoRedoControls = memo(() => {
       const actionToRedo = redoStack[redoStack.length - 1]
       setRedoStack(prev => prev.slice(0, -1))
       setDrawActions(prev => [...prev, actionToRedo])
+      console.log('Redo - Added action:', actionToRedo)
+      console.log('Current draw actions:', [...drawActions, actionToRedo])
+      console.log('Redo stack:', redoStack.slice(0, -1))
     }
   }, [redoStack, setRedoStack, setDrawActions])
 
@@ -250,6 +256,12 @@ export default function UndoApp() {
       setCurrentStroke([])
       setRedoStack([])
       wsRef.current?.send(JSON.stringify(newAction))
+
+      // ログ出力を追加
+      console.log('New stroke added:', newAction)
+      console.log('Current strokes:', [...drawActions, newAction])
+      console.log('Points in this stroke:', currentStroke.length)
+      console.log('Stroke coordinates:', currentStroke)
     }
   }, [isDrawing, currentStroke, setDrawActions, setRedoStack])
 
@@ -258,6 +270,10 @@ export default function UndoApp() {
     setRedoStack([])
     setHasDrawn(false)
     wsRef.current?.send(JSON.stringify({ type: 'reset', points: [] }))
+    // リセット時のログ出力を追加
+    console.log('Canvas reset')
+    console.log('All strokes cleared')
+    console.log('Redo stack cleared')
   }, [resetDrawActions, setRedoStack])
 
   return (
